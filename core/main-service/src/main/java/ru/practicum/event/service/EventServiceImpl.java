@@ -69,15 +69,20 @@ public class EventServiceImpl implements EventService {
             throw new DataTimeException("The date and time for which the event is scheduled cannot be " +
                     "earlier than two hours from the current moment");
         }
-
+        log.info("Paid value: {}", newEventDto.getPaid());
         if (newEventDto.getPaid() == null) {
             newEventDto.setPaid(false);
+            log.info("Paid set to default: false");
         }
+        log.info("Request moderation value: {}", newEventDto.getRequestModeration());
         if (newEventDto.getRequestModeration() == null) {
             newEventDto.setRequestModeration(true);
+            log.info("Request moderation set to default: true");
         }
+        log.info("Participant limit value: {}", newEventDto.getParticipantLimit());
         if (newEventDto.getParticipantLimit() == null) {
             newEventDto.setParticipantLimit(0L);
+            log.info("Participant limit set to default: 0");
         }
 
         Event newEvent = eventMapper.newEventDtoToEvent(newEventDto);

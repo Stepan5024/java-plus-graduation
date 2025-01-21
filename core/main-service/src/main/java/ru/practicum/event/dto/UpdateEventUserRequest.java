@@ -24,7 +24,7 @@ public class UpdateEventUserRequest {
     String annotation;
     @Positive
     Long category;
-    @Size(min = 20, max = 7000)
+    @Size(min = 20, max = 7000, message = "Description must be between 20 and 7000 characters")
     String description;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.DATE_TIME_FORMAT)
     LocalDateTime eventDate;
@@ -33,7 +33,7 @@ public class UpdateEventUserRequest {
     @PositiveOrZero
     Long participantLimit;
     Boolean requestModeration;
-    @Size(min = 3, max = 120)
+    @Size(min = 3, max = 120, message = "Title must be between 3 and 120 characters")
     String title;
     StateActionUser stateAction;
 }
