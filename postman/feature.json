@@ -7989,8 +7989,7 @@
 													"    100 \r",
 													");"
 												],
-												"type": "text/javascript",
-												"packages": {}
+												"type": "text/javascript"
 											}
 										},
 										{
@@ -8016,8 +8015,7 @@
 													"    pm.expect(source.name).equal(target.name, 'Название категории должно совпадать с отправленным');\r",
 													"});"
 												],
-												"type": "text/javascript",
-												"packages": {}
+												"type": "text/javascript"
 											}
 										}
 									],
@@ -8029,19 +8027,19 @@
 											"raw": "{{request_body}}"
 										},
 										"url": {
-											"raw": "{{baseUrl}}/admin/categories/:cat-id",
+											"raw": "{{baseUrl}}/admin/categories/:catId",
 											"host": [
 												"{{baseUrl}}"
 											],
 											"path": [
 												"admin",
 												"categories",
-												":cat-id"
+												":catId"
 											],
 											"variable": [
 												{
-													"key": "cat-id",
-													"value": ""
+													"key": "catId",
+													"value": "{{catid}}"
 												}
 											]
 										}
@@ -8280,8 +8278,7 @@
 													"    100 \r",
 													");"
 												],
-												"type": "text/javascript",
-												"packages": {}
+												"type": "text/javascript"
 											}
 										},
 										{
@@ -8295,8 +8292,7 @@
 													"});\r",
 													""
 												],
-												"type": "text/javascript",
-												"packages": {}
+												"type": "text/javascript"
 											}
 										}
 									],
@@ -8308,19 +8304,19 @@
 											"raw": "{{request_body}}"
 										},
 										"url": {
-											"raw": "{{baseUrl}}/admin/categories/:cat-id",
+											"raw": "{{baseUrl}}/admin/categories/:catId",
 											"host": [
 												"{{baseUrl}}"
 											],
 											"path": [
 												"admin",
 												"categories",
-												":cat-id"
+												":catId"
 											],
 											"variable": [
 												{
-													"key": "cat-id",
-													"value": ""
+													"key": "catId",
+													"value": "{{catid}}"
 												}
 											]
 										}
@@ -11572,7 +11568,7 @@
 									"    try {\r",
 									"        const category = await api.addCategory(rnd.getCategory());\r",
 									"        pm.collectionVariables.set(\"response\", category)\r",
-									"        pm.collectionVariables.set(\"cat-id\", category.id)\r",
+									"        pm.collectionVariables.set(\"catid\", category.id)\r",
 									"    } catch(err) {\r",
 									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
 									"    }\r",
@@ -11593,8 +11589,7 @@
 									"    100 \r",
 									");"
 								],
-								"type": "text/javascript",
-								"packages": {}
+								"type": "text/javascript"
 							}
 						},
 						{
@@ -11620,8 +11615,7 @@
 									"    pm.expect(source.name).equal(target.name, 'Название категории должно соответствовать названию категории с указанным идентификатором');\r",
 									"});"
 								],
-								"type": "text/javascript",
-								"packages": {}
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -11634,18 +11628,19 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/categories/:cat-id",
+							"raw": "{{baseUrl}}/categories/:catId",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"categories",
-								":cat-id"
+								":catId"
 							],
 							"variable": [
 								{
-									"key": "cat-id",
-									"value": ""
+									"key": "catId",
+									"value": "{{catid}}",
+									"description": "(Required) id категории"
 								}
 							]
 						}
@@ -11666,7 +11661,7 @@
 									"    try {\r",
 									"        const category = await api.addCategory(rnd.getCategory());\r",
 									"        const findedCategory = await api.findCategory(category.id);\r",
-									"        pm.collectionVariables.set(\"cat-id\", category.id)\r",
+									"        pm.collectionVariables.set(\"catid\", category.id)\r",
 									"        pm.collectionVariables.set(\"response\", findedCategory)\r",
 									"    } catch(err) {\r",
 									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
@@ -11688,8 +11683,7 @@
 									"    100 \r",
 									");"
 								],
-								"type": "text/javascript",
-								"packages": {}
+								"type": "text/javascript"
 							}
 						},
 						{
@@ -11716,8 +11710,7 @@
 									"        });\r",
 									"    });"
 								],
-								"type": "text/javascript",
-								"packages": {}
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -11730,19 +11723,19 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/admin/categories/:cat-id",
+							"raw": "{{baseUrl}}/admin/categories/:catId",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"admin",
 								"categories",
-								":cat-id"
+								":catId"
 							],
 							"variable": [
 								{
-									"key": "cat-id",
-									"value": ""
+									"key": "catId",
+									"value": "{{catid}}"
 								}
 							]
 						},
@@ -11766,7 +11759,7 @@
 									"    } catch(err) {\r",
 									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
 									"    }\r",
-									"    pm.collectionVariables.set(\"cat-id\", Number(category.id))\r",
+									"    pm.collectionVariables.set(\"catid\", Number(category.id))\r",
 									"    pm.request.body.update({\r",
 									"        mode: 'raw',\r",
 									"        raw: JSON.stringify({\r",
@@ -11791,8 +11784,7 @@
 									"    100 \r",
 									");"
 								],
-								"type": "text/javascript",
-								"packages": {}
+								"type": "text/javascript"
 							}
 						},
 						{
@@ -11818,8 +11810,7 @@
 									"    pm.expect(source.name).equal(target.name, 'Название категории должно совпадать с отправленным');\r",
 									"});"
 								],
-								"type": "text/javascript",
-								"packages": {}
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -11831,19 +11822,19 @@
 							"raw": "{{request_body}}"
 						},
 						"url": {
-							"raw": "{{baseUrl}}/admin/categories/:cat-id",
+							"raw": "{{baseUrl}}/admin/categories/:catId",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"admin",
 								"categories",
-								":cat-id"
+								":catId"
 							],
 							"variable": [
 								{
-									"key": "cat-id",
-									"value": ""
+									"key": "catId",
+									"value": "{{catid}}"
 								}
 							]
 						}
@@ -14620,7 +14611,7 @@
 			"type": "number"
 		},
 		{
-			"key": "cat-id",
+			"key": "catid",
 			"value": 1,
 			"type": "number"
 		},

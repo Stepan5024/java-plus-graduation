@@ -17,9 +17,6 @@ import ru.practicum.category.service.CategoryService;
 @RequiredArgsConstructor
 @Slf4j
 public class CategoryAdminController {
-
-    private static final String CATEGORY_ID_PATH = "/{cat-id}";
-
     private final CategoryService categoryService;
     private final CategoryMapper categoryMapper;
 
@@ -31,16 +28,16 @@ public class CategoryAdminController {
         return categoryMapper.toCategoryDto(categoryService.addCategory(category));
     }
 
-    @DeleteMapping(CATEGORY_ID_PATH)
+    @DeleteMapping("/{catId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteCategory(@PathVariable("cat-id") long catId) {
+    public void deleteCategory(@PathVariable long catId) {
         log.info("Delete category: {}", catId);
         categoryService.deleteCategory(catId);
     }
 
-    @PatchMapping(CATEGORY_ID_PATH)
+    @PatchMapping("/{catId}")
     @ResponseStatus(HttpStatus.OK)
-    public CategoryDto updateCategory(@PathVariable("cat-id") long catId, @RequestBody @Valid UpdateCategoryDto dto) {
+    public CategoryDto updateCategory(@PathVariable long catId, @RequestBody @Valid UpdateCategoryDto dto) {
         log.info("Update category: {}", dto);
         return categoryMapper.toCategoryDto(
                 categoryService.updateCategory(catId, categoryMapper.fromUpdateCategoryDto(dto)));
