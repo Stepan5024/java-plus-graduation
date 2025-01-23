@@ -28,16 +28,16 @@ public class CategoryAdminController {
         return categoryMapper.toCategoryDto(categoryService.addCategory(category));
     }
 
-    @DeleteMapping("/{catId}")
+    @DeleteMapping("/{cat-id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteCategory(@PathVariable long catId) {
+    public void deleteCategory(@PathVariable("cat-id") long catId) {
         log.info("Delete category: {}", catId);
         categoryService.deleteCategory(catId);
     }
 
-    @PatchMapping("/{catId}")
+    @PatchMapping("/{cat-id}")  // Изменено на cat-id
     @ResponseStatus(HttpStatus.OK)
-    public CategoryDto updateCategory(@PathVariable long catId, @RequestBody @Valid UpdateCategoryDto dto) {
+    public CategoryDto updateCategory(@PathVariable("cat-id") long catId, @RequestBody @Valid UpdateCategoryDto dto) {
         log.info("Update category: {}", dto);
         return categoryMapper.toCategoryDto(
                 categoryService.updateCategory(catId, categoryMapper.fromUpdateCategoryDto(dto)));
