@@ -7989,7 +7989,8 @@
 													"    100 \r",
 													");"
 												],
-												"type": "text/javascript"
+												"type": "text/javascript",
+												"packages": {}
 											}
 										},
 										{
@@ -8015,7 +8016,8 @@
 													"    pm.expect(source.name).equal(target.name, 'Название категории должно совпадать с отправленным');\r",
 													"});"
 												],
-												"type": "text/javascript"
+												"type": "text/javascript",
+												"packages": {}
 											}
 										}
 									],
@@ -8027,19 +8029,19 @@
 											"raw": "{{request_body}}"
 										},
 										"url": {
-											"raw": "{{baseUrl}}/admin/categories/:catId",
+											"raw": "{{baseUrl}}/admin/categories/:cat-id",
 											"host": [
 												"{{baseUrl}}"
 											],
 											"path": [
 												"admin",
 												"categories",
-												":catId"
+												":cat-id"
 											],
 											"variable": [
 												{
-													"key": "catId",
-													"value": "{{catid}}"
+													"key": "cat-id",
+													"value": ""
 												}
 											]
 										}
@@ -8278,7 +8280,8 @@
 													"    100 \r",
 													");"
 												],
-												"type": "text/javascript"
+												"type": "text/javascript",
+												"packages": {}
 											}
 										},
 										{
@@ -8292,7 +8295,8 @@
 													"});\r",
 													""
 												],
-												"type": "text/javascript"
+												"type": "text/javascript",
+												"packages": {}
 											}
 										}
 									],
@@ -8304,19 +8308,19 @@
 											"raw": "{{request_body}}"
 										},
 										"url": {
-											"raw": "{{baseUrl}}/admin/categories/:catId",
+											"raw": "{{baseUrl}}/admin/categories/:cat-id",
 											"host": [
 												"{{baseUrl}}"
 											],
 											"path": [
 												"admin",
 												"categories",
-												":catId"
+												":cat-id"
 											],
 											"variable": [
 												{
-													"key": "catId",
-													"value": "{{catid}}"
+													"key": "cat-id",
+													"value": ""
 												}
 											]
 										}
@@ -11589,7 +11593,8 @@
 									"    100 \r",
 									");"
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
 							}
 						},
 						{
@@ -11615,7 +11620,8 @@
 									"    pm.expect(source.name).equal(target.name, 'Название категории должно соответствовать названию категории с указанным идентификатором');\r",
 									"});"
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
 							}
 						}
 					],
@@ -11628,19 +11634,18 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/categories/:catId",
+							"raw": "{{baseUrl}}/categories/:cat-id",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"categories",
-								":catId"
+								":cat-id"
 							],
 							"variable": [
 								{
-									"key": "catId",
-									"value": "{{catid}}",
-									"description": "(Required) id категории"
+									"key": "cat-id",
+									"value": ""
 								}
 							]
 						}
@@ -11683,7 +11688,8 @@
 									"    100 \r",
 									");"
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
 							}
 						},
 						{
@@ -11710,7 +11716,8 @@
 									"        });\r",
 									"    });"
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
 							}
 						}
 					],
@@ -11723,19 +11730,19 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/admin/categories/:catId",
+							"raw": "{{baseUrl}}/admin/categories/:cat-id",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"admin",
 								"categories",
-								":catId"
+								":cat-id"
 							],
 							"variable": [
 								{
-									"key": "catId",
-									"value": "{{catid}}"
+									"key": "cat-id",
+									"value": ""
 								}
 							]
 						},
@@ -11784,7 +11791,8 @@
 									"    100 \r",
 									");"
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
 							}
 						},
 						{
@@ -11810,7 +11818,8 @@
 									"    pm.expect(source.name).equal(target.name, 'Название категории должно совпадать с отправленным');\r",
 									"});"
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
 							}
 						}
 					],
@@ -11822,19 +11831,19 @@
 							"raw": "{{request_body}}"
 						},
 						"url": {
-							"raw": "{{baseUrl}}/admin/categories/:catId",
+							"raw": "{{baseUrl}}/admin/categories/:cat-id",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"admin",
 								"categories",
-								":catId"
+								":cat-id"
 							],
 							"variable": [
 								{
-									"key": "catId",
-									"value": "{{catid}}"
+									"key": "cat-id",
+									"value": ""
 								}
 							]
 						}
