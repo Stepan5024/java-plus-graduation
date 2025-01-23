@@ -32,7 +32,7 @@ public class CategoryPublicController {
         return categoryMapper.toCategoryDtoList(categoryService.getAllCategories(from, size));
     }
 
-    @GetMapping("/{catId}")
+    @GetMapping("/{cat-id}")
     public CategoryDto getCategory(@PathVariable Long catId) {
         log.info("getCategory: catId={}", catId);
         return categoryMapper.toCategoryDto(categoryService.getCategory(catId));
