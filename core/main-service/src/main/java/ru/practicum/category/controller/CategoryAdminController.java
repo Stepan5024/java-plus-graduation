@@ -17,9 +17,8 @@ import ru.practicum.category.service.CategoryService;
 @RequiredArgsConstructor
 @Slf4j
 public class CategoryAdminController {
-    
-    private static final String CATEGORY_ID_PATH = "/{cat-id}";
 
+    private static final String CATEGORY_ID_PATH = "/{cat-id}";
 
     private final CategoryService categoryService;
     private final CategoryMapper categoryMapper;
