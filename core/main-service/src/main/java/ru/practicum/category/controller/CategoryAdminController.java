@@ -35,7 +35,7 @@ public class CategoryAdminController {
         categoryService.deleteCategory(catId);
     }
 
-    @PatchMapping("/{cat-id}")  // Изменено на cat-id
+    @PatchMapping("/{cat-id}")
     @ResponseStatus(HttpStatus.OK)
     public CategoryDto updateCategory(@PathVariable("cat-id") long catId, @RequestBody @Valid UpdateCategoryDto dto) {
         log.info("Update category: {}", dto);
