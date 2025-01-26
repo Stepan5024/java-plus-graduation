@@ -1,0 +1,27 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: none  # Не изменяем схему базы данных
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+        format_sql: true  # Форматированный SQL для удобства отладки
+  sql:
+    init:
+      mode: always  # Выполняем SQL-скрипты инициализации
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/ewm-events  # Название базы данных для events-service
+    username: root  # Логин для подключения к БД
+    password: root  # Пароль для подключения к БД
+
+logging:
+  level:
+    org.springframework.orm.jpa: info
+    org.springframework.transaction: info
+    org.springframework.transaction.interceptor: trace
+    org.springframework.orm.jpa.JpaTransactionManager: debug
+
+service:
+  name: events-service  # Уникальное имя сервиса для настройки взаимодействий

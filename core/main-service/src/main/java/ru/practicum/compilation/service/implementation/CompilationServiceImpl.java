@@ -6,13 +6,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import ru.practicum.compilation.dto.CompilationDto;
+import ru.practicum.compilation.dto.EventDto;
 import ru.practicum.compilation.dto.NewCompilationDto;
 import ru.practicum.compilation.dto.UpdateCompilationRequest;
 import ru.practicum.compilation.dto.mapper.CompilationMapper;
+import ru.practicum.compilation.dto.mapper.EventMapper;
+import ru.practicum.compilation.exchange.EventFeignClient;
 import ru.practicum.compilation.model.Compilation;
+import ru.practicum.compilation.model.Event;
 import ru.practicum.compilation.repository.CompilationRepository;
 import ru.practicum.compilation.service.CompilationService;
-import ru.practicum.event.repository.EventRepository;
 import ru.practicum.exception.NotFoundException;
 
 import java.util.Collections;
@@ -24,14 +27,20 @@ import java.util.List;
 public class CompilationServiceImpl implements CompilationService {
     private final CompilationRepository compilationRepository;
     private final CompilationMapper compilationMapper;
-    private final EventRepository eventRepository;
+    private final EventFeignClient eventFeignClient;
+    private final EventMapper eventMapper;
 
     @Override
     public CompilationDto addCompilation(NewCompilationDto compilationDto) {
         Compilation compilation = compilationMapper.fromNewCompilationDto(compilationDto);
         List<Long> ids = compilationDto.getEvents();
         if (!CollectionUtils.isEmpty(ids)) {
-            compilation.setEvents(eventRepository.findAllByIdIn(ids));
+            List<EventDto> eventDtos = eventFeignClient.findAllByIdIn(ids);
+            // Преобразование EventDto в Event
+            List<Event> events = eventDtos.stream()
+                    .map(eventMapper::fromDto)
+                    .toList();
+            compilation.setEvents(events);
         } else {
             compilation.setEvents(Collections.emptyList());
         }
@@ -43,8 +52,17 @@ public class CompilationServiceImpl implements CompilationService {
         Compilation compilation = compilationRepository.findById(compId).orElseThrow(
                 () -> new NotFoundException("Compilation with id " + compId + " not found"));
         if (!CollectionUtils.isEmpty(request.getEvents())) {
-            compilation.setEvents(eventRepository.findAllByIdIn(request.getEvents()));
+            // Получаем данные о событиях через FeignClient
+            List<EventDto> eventDtos = eventFeignClient.findAllByIdIn(request.getEvents());
+
+            // Преобразуем EventDto в Event с помощью EventMapper
+            List<Event> events = eventDtos.stream()
+                    .map(eventMapper::fromDto) // Используем EventMapper
+                    .toList();
+
+            compilation.setEvents(events);
         }
+
         if (request.getPinned() != null) compilation.setPinned(request.getPinned());
         if (request.getTitle() != null) compilation.setTitle(request.getTitle());
         return compilationMapper.toCompilationDto(compilationRepository.save(compilation));
