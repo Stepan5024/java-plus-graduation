@@ -1,6 +1,7 @@
 package ru.practicum.like.service;
 
-import ru.practicum.event.dto.EventFullDto;
+
+import ru.practicum.compilation.dto.EventFullDto;
 import ru.practicum.like.model.StatusLike;
 
 public interface LikeService {

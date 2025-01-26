@@ -4,19 +4,26 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.event.dto.EventFullDto;
-import ru.practicum.event.dto.mapper.EventMapper;
-import ru.practicum.event.model.Event;
-import ru.practicum.event.repository.EventRepository;
+
+
+import ru.practicum.compilation.dto.EventDto;
+import ru.practicum.compilation.dto.EventFullDto;
+import ru.practicum.compilation.model.Status;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.exception.RestrictionsViolationException;
+import ru.practicum.like.dto.UserDto;
+import ru.practicum.like.dto.UserMapper;
+import ru.practicum.like.dto.UserRequestDto;
+import ru.practicum.like.dto.mapper.EventMapper;
+import ru.practicum.like.exchange.EventFeignClient;
+import ru.practicum.like.exchange.RequestFeignClient;
+import ru.practicum.like.exchange.UserFeignClient;
+import ru.practicum.like.model.Event;
 import ru.practicum.like.model.Like;
 import ru.practicum.like.model.StatusLike;
+import ru.practicum.like.model.User;
 import ru.practicum.like.repository.LikeRepository;
-import ru.practicum.requests.model.Status;
-import ru.practicum.requests.repository.RequestsRepository;
-import ru.practicum.user.model.User;
-import ru.practicum.user.repository.UserRepository;
+
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -29,22 +36,30 @@ public class LikeServiceImpl implements LikeService {
     private static final int DIFFERENCE_RATING_BY_DELETE = -1;
     private static final int DIFFERENCE_RATING_BY_UPDATE = 2;
 
-    private final EventRepository eventRepository;
+    private final EventFeignClient eventFeignClient;
     private final LikeRepository likeRepository;
-    private final UserRepository userRepository;
-    private final RequestsRepository requestsRepository;
+    private final UserFeignClient userFeignClient;
+    private final RequestFeignClient requestFeignClient;
     private final EventMapper eventMapper;
+    private final UserMapper userMapper;
 
     @Override
     @Transactional
     public EventFullDto addLike(long eventId, long userId, StatusLike statusLike) {
         log.info("The beginning of the process of adding like to an event");
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("User with id=" + userId + " was not found"));
-        Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " was not found"));
+        UserRequestDto userDto = userFeignClient.getUserById(userId);
+        if (userDto == null) {
+            throw new NotFoundException("User with id=" + userId + " was not found");
+        }
 
-        if (!requestsRepository.existsByEventAndRequesterAndStatus(event, user, Status.CONFIRMED)) {
+        User user = userMapper.userRequestDtoToUser(userDto);
+
+        EventDto eventDto = eventFeignClient.getEventById(eventId);
+        if (eventDto == null) {
+            throw new NotFoundException("Event with id=" + eventId + " was not found");
+        }
+        Event event = eventMapper.fromDto(eventDto);
+        if (!requestFeignClient.existsByEventAndRequesterAndStatus(eventId, userId, Status.CONFIRMED)) {
             throw new RestrictionsViolationException("In order to like, you must be a participant in the event");
         }
 
@@ -72,10 +87,17 @@ public class LikeServiceImpl implements LikeService {
     @Transactional
     public EventFullDto updateLike(long eventId, long userId, StatusLike statusLike) {
         log.info("The beginning of the process of updating like to an event");
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("User with id=" + userId + " was not found"));
-        Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " was not found"));
+        UserRequestDto userDto = userFeignClient.getUserById(userId);
+        if (userDto == null) {
+            throw new NotFoundException("User with id=" + userId + " was not found");
+        }
+        User user = userMapper.userRequestDtoToUser(userDto);
+
+        EventDto eventDto = eventFeignClient.getEventById(eventId);
+        if (eventDto == null) {
+            throw new NotFoundException("Event with id=" + eventId + " was not found");
+        }
+        Event event = eventMapper.fromDto(eventDto);
 
         Optional<Like> likeOptional = likeRepository.findByEventAndUser(event, user);
 
@@ -98,10 +120,16 @@ public class LikeServiceImpl implements LikeService {
     @Transactional
     public void deleteLike(long eventId, long userId) {
         log.info("The beginning of the process of deleting like to an event");
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("User with id=" + userId + " was not found"));
-        Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " was not found"));
+        UserRequestDto userDto = userFeignClient.getUserById(userId);
+        if (userDto == null) {
+            throw new NotFoundException("User with id=" + userId + " was not found");
+        }
+        User user = userMapper.userRequestDtoToUser(userDto);
+        EventDto eventDto = eventFeignClient.getEventById(eventId);
+        if (eventDto == null) {
+            throw new NotFoundException("Event with id=" + eventId + " was not found");
+        }
+        Event event = eventMapper.fromDto(eventDto);
 
         Optional<Like> likeOptional = likeRepository.findByEventAndUser(event, user);
 
@@ -117,8 +145,11 @@ public class LikeServiceImpl implements LikeService {
     }
 
     private void changeRatingUserAndEvent(Event event, StatusLike statusLike, int difference) {
-        User initiatorEvent = userRepository.findById(event.getInitiator().getId())
-                .orElseThrow(() -> new NotFoundException("User not found"));
+        UserRequestDto initiatorDto = userFeignClient.getUserById(event.getInitiator().getId());
+        if (initiatorDto == null) {
+            throw new NotFoundException("Initiator with id=" + event.getInitiator().getId() + " was not found");
+        }
+        User initiatorEvent = userMapper.userRequestDtoToUser(initiatorDto);
         if (statusLike == StatusLike.LIKE) {
             initiatorEvent.setRating(initiatorEvent.getRating() + difference);
             event.setRating(event.getRating() + difference);
