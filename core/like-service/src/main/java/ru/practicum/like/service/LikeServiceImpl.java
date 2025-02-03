@@ -10,7 +10,6 @@ import ru.practicum.core.api.error.NotFoundException;
 import ru.practicum.core.api.error.RestrictionsViolationException;
 import ru.practicum.like.dto.EventDto;
 import ru.practicum.like.dto.UserRequestDto;
-import ru.practicum.like.dto.mapper.EventMapper;
 import ru.practicum.like.exchange.EventFeignClient;
 import ru.practicum.like.exchange.RequestFeignClient;
 import ru.practicum.like.exchange.UserFeignClient;
