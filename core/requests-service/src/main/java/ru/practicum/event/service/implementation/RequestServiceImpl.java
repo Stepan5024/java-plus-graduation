@@ -58,7 +58,7 @@ public class RequestServiceImpl implements RequestService {
         if (event.getInitiator().id() == userId) {
             throw new IntegrityViolationException("UserId " + userId + " initiates eventId " + eventId);
         }
-        if (!event.getState().equals(EventState.PUBLISHED.name())) {
+        if (!event.getState().equals(EventState.PUBLISHED)) {
             throw new IntegrityViolationException("Event with id = " + eventId + " is not published");
         }
 
