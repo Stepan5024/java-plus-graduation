@@ -10,7 +10,7 @@ services:
       - ewm-net
     healthcheck:
       test: "curl --fail --silent discovery-server:8761/actuator/health | grep UP || exit 1"
-      timeout: 5s
+      timeout: 10s
       interval: 20s
       retries: 5
 
@@ -27,7 +27,7 @@ services:
       - SERVER_PORT=9091
     healthcheck:
       test: "curl --fail --silent config-server:9091/actuator/health | grep UP || exit 1"
-      timeout: 5s
+      timeout: 10s
       interval: 30s
       retries: 5
 
@@ -69,8 +69,8 @@ services:
       - POSTGRES_DB=ewm-user
     healthcheck:
       test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
-      timeout: 5s
-      interval: 10s
+      timeout: 10s
+      interval: 30s
       retries: 15
 
   user-service:
@@ -91,8 +91,8 @@ services:
       - SERVER_PORT=8082
     healthcheck:
       test: "curl --fail --silent localhost:8082/actuator/health | grep UP || exit 1"
-      timeout: 5s
-      interval: 25s
+      timeout: 10s
+      interval: 30s
       retries: 10
 
       ## STATS
@@ -117,8 +117,8 @@ services:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
     healthcheck:
       test: "curl --fail --silent localhost:9090/actuator/health | grep UP || exit 1"
-      timeout: 5s
-      interval: 15s
+      timeout: 10s
+      interval: 30s
       retries: 10
 
 
@@ -133,8 +133,8 @@ services:
       - ewm-net
     healthcheck:
       test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
-      timeout: 5s
-      interval: 10s
+      timeout: 10s
+      interval: 30s
       retries: 15
 
 
@@ -158,8 +158,8 @@ services:
       - SERVER_PORT=8081
     healthcheck:
       test: "curl --fail --silent localhost:8081/actuator/health | grep UP || exit 1"
-      timeout: 5s
-      interval: 25s
+      timeout: 10s
+      interval: 30s
       retries: 10
 
   event-db:
@@ -173,8 +173,8 @@ services:
       - POSTGRES_DB=ewm-event
     healthcheck:
       test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
-      timeout: 5s
-      interval: 10s
+      timeout: 10s
+      interval: 30s
       retries: 15
 
       ##  LIKES
@@ -189,8 +189,8 @@ services:
       - POSTGRES_DB=ewm-like
     healthcheck:
       test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
-      timeout: 5s
-      interval: 10s
+      timeout: 10s
+      interval: 30s
       retries: 15
 
   like-service:
@@ -211,8 +211,8 @@ services:
       - SERVER_PORT=8088
     healthcheck:
       test: "curl --fail --silent localhost:8088/actuator/health | grep UP || exit 1"
-      timeout: 5s
-      interval: 25s
+      timeout: 10s
+      interval: 30s
       retries: 10
 
       ##  LOCATION
