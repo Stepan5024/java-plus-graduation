@@ -1,6 +1,6 @@
-version: '3.9'
-
 services:
+  ## CLOUD-SERVICES
+
   discovery-server:
     build: infra/discovery-server
     container_name: discovery-server
@@ -39,7 +39,7 @@ services:
     depends_on:
       config-server:
         condition: service_healthy
-      events-service:
+      event-service:
         condition: service_healthy
       location-service:
         condition: service_healthy
@@ -49,53 +49,53 @@ services:
         condition: service_healthy
       stats-server:
         condition: service_healthy
-      requests-service:
+      request-service:
         condition: service_healthy
     networks:
       - ewm-net
     environment:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
 
-  location-service:
-    build: core/location-service
-    container_name: ewm-location-service
-    depends_on:
-      location-db:
-        condition: service_healthy
-      like-service:
-        condition: service_healthy
-      config-server:
-        condition: service_healthy
-      user-service:
-        condition: service_healthy
-    networks:
-      - ewm-net
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://location-db:5432/ewm-location
-      - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=root
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
-      - SERVER_PORT=8089
-    healthcheck:
-      test: "curl --fail --silent localhost:8089/actuator/health | grep UP || exit 1"
-      timeout: 5s
-      interval: 25s
-      retries: 10
-  location-db:
+
+      ## USER
+  user-db:
     image: postgres:16.1
-    container_name: postgres-ewm-location-db
+    container_name:  postgres-ewm-user-db
     networks:
       - ewm-net
     environment:
       - POSTGRES_PASSWORD=root
       - POSTGRES_USER=root
-      - POSTGRES_DB=ewm-location
+      - POSTGRES_DB=ewm-user
     healthcheck:
       test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
       timeout: 5s
       interval: 10s
       retries: 15
 
+  user-service:
+    build: core/user-service
+    container_name: ewm-user-service
+    depends_on:
+      user-db:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+    networks:
+      - ewm-net
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://user-db:5432/ewm-user
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+      - SERVER_PORT=8082
+    healthcheck:
+      test: "curl --fail --silent localhost:8082/actuator/health | grep UP || exit 1"
+      timeout: 5s
+      interval: 25s
+      retries: 10
+
+      ## STATS
   stats-server:
     build: stats/stats-server
     container_name: ewm-stats-server
@@ -106,10 +106,11 @@ services:
         condition: service_healthy
       config-server:
         condition: service_healthy
+      discovery-server:
+        condition: service_healthy
     networks:
       - ewm-net
     environment:
-      - SERVER_PORT=9090
       - SPRING_DATASOURCE_URL=jdbc:postgresql://stats-db:5432/ewm-stats
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=root
@@ -119,6 +120,7 @@ services:
       timeout: 5s
       interval: 15s
       retries: 10
+
 
   stats-db:
     image: postgres:16.1
@@ -135,130 +137,61 @@ services:
       interval: 10s
       retries: 15
 
-  user-service:
-    build: core/user-service
-    container_name: user-service
-    depends_on:
-      user-db:
-        condition: service_healthy
-      config-server:
-        condition: service_healthy
-      discovery-server:
-        condition: service_healthy
-    networks:
-      - ewm-net
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://user-db:5432/ewm-user
-      - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=root
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
-      - SERVER_PORT=8083
-    healthcheck:
-      test: "curl --fail --silent localhost:8083/actuator/health | grep UP || exit 1"
-      timeout: 5s
-      interval: 25s
-      retries: 10
 
-  user-db:
-    image: postgres:16.1
-    container_name: postgres-user-db
-    networks:
-      - ewm-net
-    environment:
-      - POSTGRES_PASSWORD=root
-      - POSTGRES_USER=root
-      - POSTGRES_DB=ewm-user
-    volumes:
-      - ./core/user-service/resources/db:/docker-entrypoint-initdb.d
-    healthcheck:
-      test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
-      timeout: 5s
-      interval: 10s
-      retries: 15
-
-  requests-service:
-    build: core/requests-service
-    container_name: requests-service
-    depends_on:
-      requests-db:
-        condition: service_healthy
-      config-server:
-        condition: service_healthy
-      discovery-server:
-        condition: service_healthy
-    networks:
-      - ewm-net
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://requests-db:5432/ewm-request
-      - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=root
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
-      - SERVER_PORT=8084
-    healthcheck:
-      test: "curl --fail --silent localhost:8084/actuator/health | grep UP || exit 1"
-      timeout: 5s
-      interval: 25s
-      retries: 10
-
-  requests-db:
-    image: postgres:16.1
-    container_name: postgres-requests-db
-    networks:
-      - ewm-net
-    environment:
-      - POSTGRES_PASSWORD=root
-      - POSTGRES_USER=root
-      - POSTGRES_DB=ewm-request
-    volumes:
-      - ./core/requests-service/resources/db:/docker-entrypoint-initdb.d
-    healthcheck:
-      test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
-      timeout: 5s
-      interval: 10s
-      retries: 15
-
-
-  events-service:
+  event-service:
     build: core/events-service
-    container_name: events-service
+    container_name: ewm-event-service
     depends_on:
-      events-db:
+      event-db:
         condition: service_healthy
       config-server:
         condition: service_healthy
-      discovery-server:
+      stats-server:
         condition: service_healthy
     networks:
       - ewm-net
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://events-db:5432/ewm-event
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://event-db:5432/ewm-event
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=root
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
-      - SERVER_PORT=8086
+      - SERVER_PORT=8081
     healthcheck:
-      test: "curl --fail --silent localhost:8086/actuator/health | grep UP || exit 1"
+      test: "curl --fail --silent localhost:8081/actuator/health | grep UP || exit 1"
       timeout: 5s
       interval: 25s
       retries: 10
 
-  events-db:
+  event-db:
     image: postgres:16.1
-    container_name: postgres-events-db
+    container_name: postgres-ewm-event-db
     networks:
       - ewm-net
     environment:
       - POSTGRES_PASSWORD=root
       - POSTGRES_USER=root
       - POSTGRES_DB=ewm-event
-    volumes:
-      - ./core/events-service/resources/db:/docker-entrypoint-initdb.d
     healthcheck:
       test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
       timeout: 5s
       interval: 10s
       retries: 15
 
+      ##  LIKES
+  like-db:
+    image: postgres:16.1
+    container_name: postgres-ewm-like-db
+    networks:
+      - ewm-net
+    environment:
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_USER=root
+      - POSTGRES_DB=ewm-like
+    healthcheck:
+      test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
+      timeout: 5s
+      interval: 10s
+      retries: 15
 
   like-service:
     build: core/like-service
@@ -282,20 +215,90 @@ services:
       interval: 25s
       retries: 10
 
-  like-db:
+      ##  LOCATION
+  location-db:
     image: postgres:16.1
-    container_name: postgres-ewm-like-db
+    container_name: postgres-ewm-location-db
     networks:
       - ewm-net
     environment:
       - POSTGRES_PASSWORD=root
       - POSTGRES_USER=root
-      - POSTGRES_DB=ewm-like
+      - POSTGRES_DB=ewm-location
     healthcheck:
       test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
       timeout: 5s
       interval: 10s
       retries: 15
+
+  location-service:
+    build: core/location-service
+    container_name: ewm-location-service
+    depends_on:
+      config-server:
+        condition: service_healthy
+      discovery-server:
+        condition: service_healthy
+      location-db:
+        condition: service_healthy
+      like-service:
+        condition: service_healthy
+      user-service:
+        condition: service_healthy
+    networks:
+      - ewm-net
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://location-db:5432/ewm-location
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+      - SERVER_PORT=8089
+    healthcheck:
+      test: "curl --fail --silent localhost:8089/actuator/health | grep UP || exit 1"
+      timeout: 5s
+      interval: 25s
+      retries: 10
+
+  request-db:
+    image: postgres:16.1
+    container_name: postgres-ewm-request-db
+    networks:
+      - ewm-net
+    environment:
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_USER=root
+      - POSTGRES_DB=ewm-request
+    healthcheck:
+      test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
+      timeout: 5s
+      interval: 10s
+      retries: 15
+
+  request-service:
+    build: core/requests-service
+    container_name: ewm-request-service
+    depends_on:
+      request-db:
+        condition: service_healthy
+      event-service:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+      user-service:
+        condition: service_healthy
+    networks:
+      - ewm-net
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://request-db:5432/ewm-request
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+      - SERVER_PORT=8087
+    healthcheck:
+      test: "curl --fail --silent localhost:8087/actuator/health | grep UP || exit 1"
+      timeout: 5s
+      interval: 25s
+      retries: 10
 
 networks:
   ewm-net:
