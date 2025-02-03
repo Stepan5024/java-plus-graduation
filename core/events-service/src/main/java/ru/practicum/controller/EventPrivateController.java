@@ -8,9 +8,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.config.AppConfig;
-import ru.practicum.dto.*;
+import ru.practicum.core.api.dto.event.EventFullDto;
+import ru.practicum.core.api.dto.event.EventShortDto;
+import ru.practicum.core.api.dto.event.NewEventDto;
+import ru.practicum.core.api.dto.event.UpdateEventUserRequest;
+import ru.practicum.core.api.dto.request.ParticipationRequestDto;
+import ru.practicum.dto.EventRequestStatusUpdateRequestDto;
 import ru.practicum.service.EventService;
-
 import ru.practicum.utility.StatProxyClient;
 
 import java.util.List;
@@ -70,7 +74,7 @@ public class EventPrivateController {
     }
 
     @PatchMapping("/{eventId}/requests")
-    public EventRequestStatusUpdateResultDto updateRequestByEventId(@RequestBody
+    public List<ParticipationRequestDto> updateRequestByEventId(@RequestBody
                                                                     @Valid
                                                                     EventRequestStatusUpdateRequestDto updateRequests,
                                                                     @PathVariable long userId,

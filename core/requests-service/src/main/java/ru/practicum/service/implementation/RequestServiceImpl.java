@@ -3,21 +3,19 @@ package ru.practicum.service.implementation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.core.api.enums.EventState;
+import ru.practicum.core.api.enums.Status;
 import ru.practicum.dto.EventDto;
+import ru.practicum.dto.ParticipationRequestDto;
 import ru.practicum.dto.UserDto;
+import ru.practicum.dto.mapper.RequestMapper;
 import ru.practicum.exception.IntegrityViolationException;
 import ru.practicum.exception.NotFoundException;
-import ru.practicum.dto.ParticipationRequestDto;
-import ru.practicum.dto.mapper.RequestMapper;
 import ru.practicum.exchange.EventFeignClient;
 import ru.practicum.exchange.UserFeignClient;
 import ru.practicum.model.Request;
-import ru.practicum.model.State;
-import ru.practicum.model.Status;
-import ru.practicum.model.User;
 import ru.practicum.repository.RequestsRepository;
 import ru.practicum.service.RequestService;
-
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -57,7 +55,7 @@ public class RequestServiceImpl implements RequestService {
         if (event.getInitiatorId() == userId) {
             throw new IntegrityViolationException("UserId " + userId + " initiates eventId " + eventId);
         }
-        if (!event.getState().equals(State.PUBLISHED.name())) {
+        if (!event.getState().equals(EventState.PUBLISHED.name())) {
             throw new IntegrityViolationException("Event with id = " + eventId + " is not published");
         }
 
@@ -65,11 +63,7 @@ public class RequestServiceImpl implements RequestService {
         if (userDto == null) {
             throw new NotFoundException("User with id = " + userId + " not found");
         }
-        User user = new User();
-        user.setId(userId);
-        user.setEmail(userDto.getEmail());
-        user.setName(userDto.getName());
-        user.setRating(userDto.getRating());
+
 
         List<Request> confirmedRequests = requestsRepository.findAllByStatusAndEventId(Status.CONFIRMED, eventId);
         if ((event.getParticipantLimit() != 0L) && (event.getParticipantLimit() == confirmedRequests.size())) {
@@ -78,7 +72,7 @@ public class RequestServiceImpl implements RequestService {
 
         Request request = new Request();
         request.setCreated(LocalDateTime.now());
-        request.setRequester(user);
+        request.setRequesterId(userDto.getId());
         request.setEventId(eventId);
         if ((event.getParticipantLimit() == 0L) || (!event.isRequestModeration())) {
             request.setStatus(Status.CONFIRMED);

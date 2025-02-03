@@ -8,8 +8,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.dto.EventFullDto;
-import ru.practicum.dto.UpdateEventAdminRequest;
+import ru.practicum.core.api.dto.event.EventFullDto;
+import ru.practicum.core.api.dto.event.UpdateEventAdminRequest;
+import ru.practicum.core.api.enums.EventState;
 import ru.practicum.service.EventService;
 import ru.practicum.utility.Constants;
 
@@ -26,7 +27,7 @@ public class EventAdminController {
 
     @GetMapping
     public List<EventFullDto> getAllAdminEvents(@RequestParam(required = false) List<Long> users,
-                                                @RequestParam(required = false) State state,
+                                                @RequestParam(required = false) EventState state,
                                                 @RequestParam(required = false) List<Long> categories,
                                                 @RequestParam(required = false)
                                                 @DateTimeFormat(pattern = Constants.DATE_TIME_FORMAT)

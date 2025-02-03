@@ -11,24 +11,26 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import ru.practicum.ViewStatsDto;
-
-import ru.practicum.dto.*;
-
+import ru.practicum.core.api.dto.event.*;
+import ru.practicum.core.api.dto.request.ParticipationRequestDto;
+import ru.practicum.core.api.enums.EventState;
+import ru.practicum.core.api.enums.RequestStatus;
+import ru.practicum.core.api.enums.StateAction;
+import ru.practicum.dto.EventRequestStatusUpdateRequestDto;
 import ru.practicum.dto.category.CategoryDto;
 import ru.practicum.dto.mapper.EventMapper;
-import ru.practicum.dto.mapper.RequestMapper;
 import ru.practicum.dto.user.UserDto;
 import ru.practicum.enums.EventPublicSort;
-import ru.practicum.enums.StateActionAdmin;
 import ru.practicum.exception.DataTimeException;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.exception.RestrictionsViolationException;
 import ru.practicum.exchange.CategoryFeignClient;
 import ru.practicum.exchange.RequestsFeignClient;
 import ru.practicum.exchange.UserFeignClient;
-import ru.practicum.model.*;
+import ru.practicum.model.Category;
+import ru.practicum.model.Event;
+import ru.practicum.repository.CategoryRepository;
 import ru.practicum.repository.EventRepository;
-
 import ru.practicum.utility.StatProxyClient;
 
 import java.time.LocalDateTime;
@@ -51,7 +53,7 @@ public class EventServiceImpl implements EventService {
     private final RequestsFeignClient requestsFeignClient;
     private final StatProxyClient statClient;
     private final EventMapper eventMapper;
-    private final RequestMapper requestMapper;
+    private final CategoryRepository categoryRepository;
 
     @Transactional
     @Override
@@ -61,19 +63,11 @@ public class EventServiceImpl implements EventService {
         if (initiatorDto == null) {
             throw new NotFoundException("User with id=" + userId + " was not found");
         }
-        User initiator = new User();
-        initiator.setId(initiatorDto.getId());
-        initiator.setEmail(initiatorDto.getEmail());
-        initiator.setName(initiatorDto.getName());
-        initiator.setRating(initiatorDto.getRating());
 
-       CategoryDto categoryDto = categoryFeignClient.getCategoryById(newEventDto.getCategory());
-        if (categoryDto == null) {
-            throw new NotFoundException("Category with id=" + newEventDto.getCategory() + " was not found");
-        }
-        Category category = new Category();
-        category.setId(categoryDto.getId());
-        category.setName(categoryDto.getName());
+
+        Category category = categoryRepository.findById(newEventDto.getCategory())
+                .orElseThrow(() -> new NotFoundException("Category with id " + newEventDto.getCategory() + " not found"));
+
 
         if (newEventDto.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
             throw new DataTimeException("The date and time for which the event is scheduled cannot be " +
@@ -91,16 +85,16 @@ public class EventServiceImpl implements EventService {
         }
         log.info("Participant limit value: {}", newEventDto.getParticipantLimit());
         if (newEventDto.getParticipantLimit() == null) {
-            newEventDto.setParticipantLimit(0L);
+            newEventDto.setParticipantLimit(0);
             log.info("Participant limit set to default: 0");
         }
 
         Event newEvent = eventMapper.newEventDtoToEvent(newEventDto);
         newEvent.setCategory(category);
         newEvent.setCreatedOn(LocalDateTime.now());
-        newEvent.setInitiator(initiator);
+        newEvent.setInitiator(initiatorDto);
         newEvent.setPublishedOn(LocalDateTime.now());
-        newEvent.setState(State.PENDING);
+        newEvent.setState(EventState.PENDING);
         newEvent.setConfirmedRequests(0L);
         newEvent.setRating(0L);
 
@@ -148,7 +142,7 @@ public class EventServiceImpl implements EventService {
         }
 
         PageRequest pageRequest = PageRequest.of(from, size);
-        BooleanExpression byUserId = event.initiator.id.eq(userId);
+        BooleanExpression byUserId = event.initiatorId.eq(userId);
         Page<Event> pageEvents = eventRepository.findAll(byUserId, pageRequest);
         List<Event> events = pageEvents.getContent();
         setViews(events);
@@ -175,7 +169,7 @@ public class EventServiceImpl implements EventService {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " was not found"));
 
-        if (event.getState().equals(State.PUBLISHED)) {
+        if (event.getState().equals(EventState.PUBLISHED)) {
             throw new RestrictionsViolationException("You can only change canceled events or events in the waiting state " +
                     "for moderation");
         }
@@ -221,8 +215,8 @@ public class EventServiceImpl implements EventService {
         }
         if (updateEvent.getStateAction() != null) {
             switch (updateEvent.getStateAction()) {
-                case CANCEL_REVIEW -> event.setState(State.CANCELED);
-                case SEND_TO_REVIEW -> event.setState(State.PENDING);
+                case CANCEL_REVIEW -> event.setState(EventState.CANCELED);
+                case SEND_TO_REVIEW -> event.setState(EventState.PENDING);
             }
         }
 
@@ -233,27 +227,31 @@ public class EventServiceImpl implements EventService {
     @Transactional(readOnly = true)
     @Override
     public List<ParticipationRequestDto> findRequestByEventId(long userId, long eventId) {
-        log.info("The beginning of the process of finding a requests");
+        log.info("The beginning of the process of finding requests for userId={} and eventId={}", userId, eventId);
 
+        // Проверка существования пользователя
         if (!userFeignClient.existsById(userId)) {
             throw new NotFoundException("User with id=" + userId + " was not found");
         }
 
+        // Проверка существования события
         if (!eventRepository.existsById(eventId)) {
             throw new NotFoundException("Event with id=" + eventId + " was not found");
         }
 
-        List<Request> requests = requestsFeignClient.getRequestsByEventId(eventId);
+        // Получение заявок для события через Feign клиент
+        List<ParticipationRequestDto> requests = requestsFeignClient.getRequestsByEventId(eventId);
 
-        log.info("The requests was found");
-        return requestMapper.listRequestToListParticipationRequestDto(requests);
+        // Преобразование сущностей Request в DTO ParticipationRequestDto
+        log.info("Found {} requests for eventId={}", requests.size(), eventId);
+        return requests;
     }
 
     @Transactional
     @Override
-    public EventRequestStatusUpdateResultDto updateRequestByEventId(EventRequestStatusUpdateRequestDto updateRequests,
-                                                                    long userId,
-                                                                    long eventId) {
+    public List<ParticipationRequestDto> updateRequestByEventId(EventRequestStatusUpdateRequestDto updateRequests,
+                                                                long userId,
+                                                                long eventId) {
         log.info("The beginning of the process of update a requests");
 
         if (!userFeignClient.existsById(userId)) {
@@ -262,7 +260,7 @@ public class EventServiceImpl implements EventService {
 
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " was not found"));
-        List<Request> confirmedRequests = requestsFeignClient.getConfirmedRequestsByEventId(eventId);
+        List<ParticipationRequestDto> confirmedRequests = requestsFeignClient.getConfirmedRequestsByEventId(eventId);
 
 
         if (event.getParticipantLimit() != 0 && event.getParticipantLimit() == confirmedRequests.size()) {
@@ -270,22 +268,22 @@ public class EventServiceImpl implements EventService {
                     "there are " + (event.getParticipantLimit() - event.getConfirmedRequests()) + " free places");
         }
 
-        List<Request> requests = requestsFeignClient.getRequestsByIds(updateRequests.getRequestIds());
+        List<ParticipationRequestDto> requests = requestsFeignClient.getRequestsByIds(updateRequests.getRequestIds());
 
 
-        if (requests.stream().map(Request::getStatus).anyMatch(status -> !status.equals(Status.PENDING))) {
+        if (requests.stream().map(ParticipationRequestDto::getStatus).anyMatch(status -> !status.equals(RequestStatus.PENDING))) {
             throw new RestrictionsViolationException("The status can only be changed for applications that are " +
                     "in the PENDING state");
         }
 
         requests.forEach(request -> request.setStatus(updateRequests.getStatus()));
 
-        if (updateRequests.getStatus().equals(Status.CONFIRMED)) {
+        if (updateRequests.getStatus().equals(RequestStatus.CONFIRMED)) {
             event.setConfirmedRequests(event.getConfirmedRequests() + updateRequests.getRequestIds().size());
         }
 
         log.info("The requests was updated");
-        return requestMapper.toEventRequestStatusResult(null, requests);
+        return requests;
     }
 
     @Override
@@ -338,7 +336,7 @@ public class EventServiceImpl implements EventService {
     @Transactional(readOnly = true)
     public EventFullDto getPublicEventById(long id) {
         log.info("The beginning of the process of finding a event by public");
-        Event event = eventRepository.findByIdAndState(id, State.PUBLISHED)
+        Event event = eventRepository.findByIdAndState(id, EventState.PUBLISHED)
                 .orElseThrow(() -> new NotFoundException("Event with id=" + id + " was not found"));
         setViews(List.of(event));
         log.info("The event was found by public");
@@ -347,7 +345,7 @@ public class EventServiceImpl implements EventService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<EventFullDto> getAllAdminEvents(List<Long> users, State state, List<Long> categories,
+    public List<EventFullDto> getAllAdminEvents(List<Long> users, EventState state, List<Long> categories,
                                                 LocalDateTime rangeStart, LocalDateTime rangeEnd, int from,
                                                 int size, boolean sortRating) {
         log.info("The beginning of the process of finding a events by admin");
@@ -362,7 +360,7 @@ public class EventServiceImpl implements EventService {
 
         BooleanBuilder builder = new BooleanBuilder();
         if (!CollectionUtils.isEmpty(users) && !users.contains(0L)) {
-            builder.and(event.initiator.id.in(users));
+            builder.and(event.initiatorId.in(users));
         }
         if (state != null) {
             builder.and(event.state.eq(state));
@@ -449,26 +447,26 @@ public class EventServiceImpl implements EventService {
         return eventMapper.eventToEventFullDto(event);
     }
 
-    private void setStateByAdmin(Event event, StateActionAdmin stateActionAdmin) {
+    private void setStateByAdmin(Event event, StateAction stateActionAdmin) {
         if (event.getEventDate().isBefore(LocalDateTime.now().plusHours(1)) &&
-                stateActionAdmin.equals(StateActionAdmin.PUBLISH_EVENT)) {
+                stateActionAdmin.equals(StateAction.PUBLISH_EVENT)) {
             throw new DataTimeException("The start date of the event to be modified must be no earlier " +
                     "than one hour from the date of publication.");
         }
 
-        if (stateActionAdmin.equals(StateActionAdmin.PUBLISH_EVENT)) {
-            if (!event.getState().equals(State.PENDING)) {
+        if (stateActionAdmin.equals(StateAction.PUBLISH_EVENT)) {
+            if (!event.getState().equals(EventState.PENDING)) {
                 throw new RestrictionsViolationException("An event can be published only if it is in the waiting state " +
                         "for publication");
             }
-            event.setState(State.PUBLISHED);
+            event.setState(EventState.PUBLISHED);
             event.setPublishedOn(LocalDateTime.now());
         } else {
-            if (event.getState().equals(State.PUBLISHED)) {
+            if (event.getState().equals(EventState.PUBLISHED)) {
                 throw new RestrictionsViolationException("AAn event can be rejected only if it has not been " +
                         "published yet");
             }
-            event.setState(State.CANCELED);
+            event.setState(EventState.CANCELED);
         }
 
     }

@@ -1,40 +1,40 @@
 spring:
   application:
-    name: events-service  # Уникальное имя для микросервиса
+    name: events-service
   config:
-    import: "configserver:"  # Используем Config Server для загрузки конфигурации
+    import: "configserver:"
   cloud:
     config:
       discovery:
-        enabled: true  # Разрешаем поиск Config Server через Eureka
+        enabled: true
         service-id: config-server
-      fail-fast: true  # Обрываем загрузку, если конфиг не загружен
+      fail-fast: true
       retry:
         use-random-policy: true
-        max-interval: 6000  # Интервал между попытками подключения к Config Server
+        max-interval: 6000
 
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://${eureka.instance.hostname:localhost}:${eureka.instance.port:8761}/eureka/  # URL Eureka-сервера
+      defaultZone: http://${eureka.instance.hostname:localhost}:${eureka.instance.port:8761}/eureka/
   instance:
     preferIpAddress: true
-    hostname: localhost  # Хост для регистрации
-    instance-id: "${spring.application.name}:${random.value}"  # Уникальный ID инстанса для Eureka
-    leaseRenewalIntervalInSeconds: 10  # Интервал обновления лиза в Eureka
+    hostname: localhost
+    instance-id: "${spring.application.name}:${random.value}"
+    leaseRenewalIntervalInSeconds: 10
 
 server:
-  port: 0  # Автоматический выбор порта (можно заменить фиксированным значением)
+  port: 0
 
 logging:
   level:
-    root: INFO  # Уровень логирования (можно настроить под нужды проекта)
+    root: INFO
 
 management:
   endpoints:
     web:
       exposure:
-        include: "*"  # Открываем доступ ко всем actuator-эндпоинтам
+        include: "*"
   endpoint:
     health:
-      show-details: ALWAYS  # Показывать подробности в /actuator/health
+      show-details: ALWAYS

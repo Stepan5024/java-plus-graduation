@@ -5,61 +5,45 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import ru.practicum.core.api.constant.Constants;
 import ru.practicum.core.api.dto.event.annotation.FutureAfterTwoHours;
 import ru.practicum.core.api.dto.location.LocationDto;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
 
-public record NewEventDto(
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
+public class NewEventDto{
 
         @NotBlank @Size(min = 20, max = 2000)
-        String annotation,
+        String annotation;
 
-        Long category,
+        Long category;
 
         @NotBlank @Size(min = 20, max = 7000)
-        String description,
+        String description;
 
         @NotNull @FutureAfterTwoHours @JsonFormat(pattern = Constants.JSON_TIME_FORMAT)
-        LocalDateTime eventDate,
+        LocalDateTime eventDate;
 
         @NotNull
-        LocationDto location,
+        LocationDto location;
 
-        Boolean paid,
+        Boolean paid;
 
         @PositiveOrZero
-        Integer participantLimit,
+        Integer participantLimit;
 
-        Boolean requestModeration,
+        Boolean requestModeration;
 
         @NotNull @Size(min = 3, max = 120)
-        String title
-) {
-        public NewEventDto(
-                String annotation,
-                Long category,
-                String description,
-                LocalDateTime eventDate,
-                LocationDto location,
-                Boolean paid,
-                Integer participantLimit,
-                Boolean requestModeration,
-                String title) {
-
-                this.annotation = annotation;
-                this.category = category;
-                this.description = description;
-                this.eventDate = eventDate;
-                this.location = location;
-                this.paid = Objects.requireNonNullElse(paid, false);
-                this.participantLimit = Objects.requireNonNullElse(participantLimit, 0);
-                this.requestModeration = Objects.requireNonNullElse(requestModeration, true);
-                this.title = title;
-
-        }
-
+        String title;
 
 }

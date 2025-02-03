@@ -7,7 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import ru.practicum.Constants;
-import ru.practicum.model.Status;
+import ru.practicum.core.api.enums.Status;
 
 import java.time.LocalDateTime;
 

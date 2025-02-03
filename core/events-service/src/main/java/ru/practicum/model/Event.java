@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import ru.practicum.core.api.dto.location.LocationDto;
+import ru.practicum.core.api.enums.EventState;
 import ru.practicum.dto.user.UserDto;
 
 import java.time.LocalDateTime;
@@ -72,7 +73,7 @@ public class Event {
 
     @NotNull
     @Enumerated(value = EnumType.STRING)
-    State state;
+    EventState state;
 
     @NotBlank
     String title;

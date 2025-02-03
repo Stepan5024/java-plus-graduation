@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
-
+import ru.practicum.core.api.enums.RequestStatus;
 
 import java.util.Set;
 
@@ -18,5 +18,5 @@ public class EventRequestStatusUpdateRequestDto {
     @NotNull
     Set<Long> requestIds;
     @NotNull
-    Status status;
+    RequestStatus status;
 }

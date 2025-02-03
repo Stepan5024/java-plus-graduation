@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
+import ru.practicum.core.api.enums.Status;
 
 import java.time.LocalDateTime;
 
@@ -28,9 +28,8 @@ public class Request {
     Long eventId;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "requester_id")
-    User requester;
+    @Column(name = "requester_id")
+    Long requesterId;
 
     @NotNull
     @Enumerated(value = EnumType.STRING)

@@ -3,9 +3,9 @@ package ru.practicum.dto.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
-import ru.practicum.dto.EventFullDto;
-import ru.practicum.dto.EventShortDto;
-import ru.practicum.dto.NewEventDto;
+import ru.practicum.core.api.dto.event.EventFullDto;
+import ru.practicum.core.api.dto.event.EventShortDto;
+import ru.practicum.core.api.dto.event.NewEventDto;
 import ru.practicum.model.Event;
 
 import java.util.List;

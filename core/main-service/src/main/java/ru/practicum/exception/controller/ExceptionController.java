@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
-import ru.practicum.exception.DataTimeException;
-import ru.practicum.exception.IntegrityViolationException;
-import ru.practicum.exception.NotFoundException;
-import ru.practicum.exception.RestrictionsViolationException;
+import ru.practicum.core.api.error.DataTimeException;
+import ru.practicum.core.api.error.IntegrityViolationException;
+import ru.practicum.core.api.error.NotFoundException;
+import ru.practicum.core.api.error.RestrictionsViolationException;
 import ru.practicum.exception.model.ApiError;
 
 import java.time.LocalDateTime;

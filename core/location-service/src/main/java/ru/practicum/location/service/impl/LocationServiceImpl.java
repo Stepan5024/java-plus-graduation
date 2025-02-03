@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.practicum.core.api.client.LikeServiceClient;
 import ru.practicum.core.api.client.UserServiceClient;
 import ru.practicum.core.api.dto.location.LocationDto;
-import ru.practicum.core.api.exception.NotFoundException;
+import ru.practicum.core.api.error.NotFoundException;
 import ru.practicum.location.mapper.LocationMapper;
 import ru.practicum.location.model.Location;
 import ru.practicum.location.repository.LocationRepository;
