@@ -2,7 +2,7 @@ spring:
   application:
     name: location-service
   config:
-    import: "configserver:http://config-server:9091"
+    import: "configserver:"
   cloud:
     config:
       fail-fast: true
@@ -10,9 +10,8 @@ spring:
         useRandomPolicy: true
         max-interval: 6000
       discovery:
-        enabled: false
+        enabled: true
         service-id: config-server
-
 
 eureka:
   client:

@@ -1,13 +1,35 @@
 package ru.practicum.like.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import ru.practicum.like.model.Like;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
-public interface LikeRepository extends JpaRepository<Like, Long> {
+public interface LikeRepository {
 
-    boolean existsByEventIdAndUserId(Long eventId, Long userId);
+    //EVENTS
+    Long addEventLike(long userId, long eventId);
 
-    Optional<Like> findByEventIdAndUserId(Long eventId, Long userId);
+    Long deleteEventLike(long userId, long eventId);
+
+    Long getCountByEventId(long eventId);
+
+    Long getCountByLocationId(long locationId);
+
+    Map<Long, Long> getAllEventsLikesByIds(List<Long> eventIds);
+
+    Map<Long, Long> getTopLikedEventsIds(Integer count);
+
+    //LOCATIONS
+    Long addLocationLike(Long locationId, Long userId);
+
+    Long deleteLocationLike(Long locationId, Long userId);
+
+    Map<Long, Long> getTopLikedLocationsIds(Integer count);
+
+    Optional<Boolean> isEventLiked(long eventId, long userId);
+
+    Optional<Boolean> isLocationLiked(long locationId, long userId);
+
+
 }

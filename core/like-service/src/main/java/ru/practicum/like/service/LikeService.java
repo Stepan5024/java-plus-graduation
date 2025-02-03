@@ -1,13 +1,26 @@
 package ru.practicum.like.service;
 
-
-import ru.practicum.core.api.dto.event.EventDto;
-import ru.practicum.like.model.StatusLike;
+import java.util.List;
+import java.util.Map;
 
 public interface LikeService {
-    EventDto addLike(long eventId, long userId, StatusLike statusLike);
 
-    EventDto updateLike(long eventId, long userId, StatusLike statusLike);
+    Map<Long, Long> getAllEventsLikesByIds(List<Long> eventIdList);
 
-    void deleteLike(long eventId, long userId);
+    Long getCountByEventId(Long eventId);
+
+    Long getCountByLocationId(Long locationId);
+
+    Long addEventLike(Long eventId, Long userId);
+
+    Long deleteEventLike(Long eventId, Long userId);
+
+    Long addLocationLike(Long locationId, Long userId);
+
+    Long deleteLocationLike(Long locationId, Long userId);
+
+    Map<Long, Long> getTopLikedLocationsIds(Integer count);
+
+    Map<Long, Long> getTopLikedEventsIds(Integer count);
+
 }
