@@ -10,7 +10,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.dto.EventFullDto;
 import ru.practicum.dto.UpdateEventAdminRequest;
-import ru.practicum.model.State;
 import ru.practicum.service.EventService;
 import ru.practicum.utility.Constants;
 

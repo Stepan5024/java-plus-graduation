@@ -3,7 +3,6 @@ package ru.practicum.service;
 import ru.practicum.dto.*;
 import ru.practicum.enums.EventPublicSort;
 import ru.practicum.model.Event;
-import ru.practicum.model.State;
 
 
 import java.time.LocalDateTime;

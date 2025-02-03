@@ -116,6 +116,8 @@ services:
       - POSTGRES_PASSWORD=root
       - POSTGRES_USER=root
       - POSTGRES_DB=ewm-user
+    volumes:
+      - ./core/user-service/resources/db:/docker-entrypoint-initdb.d
     healthcheck:
       test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
       timeout: 5s
@@ -155,6 +157,8 @@ services:
       - POSTGRES_PASSWORD=root
       - POSTGRES_USER=root
       - POSTGRES_DB=ewm-request
+    volumes:
+      - ./core/requests-service/resources/db:/docker-entrypoint-initdb.d
     healthcheck:
       test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
       timeout: 5s
@@ -194,6 +198,8 @@ services:
       - POSTGRES_PASSWORD=root
       - POSTGRES_USER=root
       - POSTGRES_DB=category-service
+    volumes:
+      - ./core/category-service/resources/db:/docker-entrypoint-initdb.d
     healthcheck:
       test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
       timeout: 5s
@@ -233,6 +239,8 @@ services:
       - POSTGRES_PASSWORD=root
       - POSTGRES_USER=root
       - POSTGRES_DB=ewm-event
+    volumes:
+      - ./core/events-service/resources/db:/docker-entrypoint-initdb.d
     healthcheck:
       test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
       timeout: 5s

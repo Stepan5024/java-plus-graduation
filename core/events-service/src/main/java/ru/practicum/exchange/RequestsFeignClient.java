@@ -2,8 +2,6 @@ package ru.practicum.exchange;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.model.Request;
-import ru.practicum.model.Status;
 
 import java.util.List;
 import java.util.Set;

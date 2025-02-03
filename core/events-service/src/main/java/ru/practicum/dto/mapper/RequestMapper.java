@@ -5,8 +5,6 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import ru.practicum.dto.EventRequestStatusUpdateResultDto;
 import ru.practicum.dto.ParticipationRequestDto;
-import ru.practicum.model.Request;
-import ru.practicum.model.Status;
 
 
 import java.util.List;

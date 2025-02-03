@@ -5,7 +5,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
+import ru.practicum.core.api.dto.location.LocationDto;
+import ru.practicum.dto.user.UserDto;
 
 import java.time.LocalDateTime;
 
@@ -21,44 +22,67 @@ public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
+
     @NotBlank
     String annotation;
+
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     Category category;
+
     @NotNull
+    @Column(name = "created_on")
     LocalDateTime createdOn;
+
     @NotBlank
     String description;
+
     @NotNull
+    @Column(name = "event_date")
     LocalDateTime eventDate;
+
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "initiator_id")
-    User initiator;
+    @Column(name = "initiator_id")
+    Long initiatorId;
+
+    @Transient
+    private UserDto initiator;
+
     @NotNull
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "location_id")
-    Location location;
+    @Column(name = "location_id")
+    private Long locationId;
+
+    @Transient
+    private LocationDto location;
+
     @NotNull
     @Column
     Boolean paid;
+
     @NotNull
     Long participantLimit;
+
     @NotNull
     @Column
     LocalDateTime publishedOn;
+
     @NotNull
     Boolean requestModeration;
+
     @NotNull
     @Enumerated(value = EnumType.STRING)
     State state;
+
     @NotBlank
     String title;
+
     @Column(name = "confirmed_requests")
     Long confirmedRequests;
+
+    @Transient
     Long rating;
+
     @Transient
     Long views;
 }

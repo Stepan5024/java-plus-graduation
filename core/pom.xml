@@ -17,6 +17,9 @@
         <module>main-service</module>
         <module>user-service</module>
         <module>requests-service</module>
+        <module>interaction-api</module>
+        <module>location-service</module>
+        <module>like-service</module>
     </modules>
 
 </project>

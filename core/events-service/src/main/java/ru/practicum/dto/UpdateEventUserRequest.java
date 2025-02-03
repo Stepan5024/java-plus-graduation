@@ -10,7 +10,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import ru.practicum.enums.StateActionUser;
-import ru.practicum.model.Location;
 import ru.practicum.utility.Constants;
 
 import java.time.LocalDateTime;
