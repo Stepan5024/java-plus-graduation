@@ -11,7 +11,6 @@ import ru.practicum.compilation.dto.EventFullDto;
 import ru.practicum.compilation.model.Status;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.exception.RestrictionsViolationException;
-import ru.practicum.like.dto.UserDto;
 import ru.practicum.like.dto.UserMapper;
 import ru.practicum.like.dto.UserRequestDto;
 import ru.practicum.like.dto.mapper.EventMapper;
