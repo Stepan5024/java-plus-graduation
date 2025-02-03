@@ -20,30 +20,35 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class NewEventDto{
+public class NewEventDto {
 
-        @NotBlank @Size(min = 20, max = 2000)
-        String annotation;
+    @NotBlank
+    @Size(min = 20, max = 2000)
+    String annotation;
 
-        Long category;
+    Long category;
 
-        @NotBlank @Size(min = 20, max = 7000)
-        String description;
+    @NotBlank
+    @Size(min = 20, max = 7000)
+    String description;
 
-        @NotNull @FutureAfterTwoHours @JsonFormat(pattern = Constants.JSON_TIME_FORMAT)
-        LocalDateTime eventDate;
+    @NotNull
+    @FutureAfterTwoHours
+    @JsonFormat(pattern = Constants.JSON_TIME_FORMAT)
+    LocalDateTime eventDate;
 
-        @NotNull
-        LocationDto location;
+    @NotNull
+    LocationDto location;
 
-        Boolean paid;
+    Boolean paid;
 
-        @PositiveOrZero
-        Integer participantLimit;
+    @PositiveOrZero
+    Integer participantLimit;
 
-        Boolean requestModeration;
+    Boolean requestModeration;
 
-        @NotNull @Size(min = 3, max = 120)
-        String title;
+    @NotNull
+    @Size(min = 3, max = 120)
+    String title;
 
 }

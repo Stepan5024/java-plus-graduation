@@ -19,35 +19,35 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UpdateEventUserRequest{
+public class UpdateEventUserRequest {
 
-        @Size(min = 20, max = 2000)
-        String annotation;
+    @Size(min = 20, max = 2000)
+    String annotation;
 
-        Long category;
+    Long category;
 
-        @Size(min = 20, max = 7000)
-        String description;
+    @Size(min = 20, max = 7000)
+    String description;
 
-        @JsonFormat(pattern = Constants.JSON_TIME_FORMAT, shape = JsonFormat.Shape.STRING)
-        @FutureAfterTwoHours
-        LocalDateTime eventDate;
+    @JsonFormat(pattern = Constants.JSON_TIME_FORMAT, shape = JsonFormat.Shape.STRING)
+    @FutureAfterTwoHours
+    LocalDateTime eventDate;
 
-        LocationDto location;
+    LocationDto location;
 
-        Boolean paid;
+    Boolean paid;
 
-        @PositiveOrZero
-        Long participantLimit;
+    @PositiveOrZero
+    Long participantLimit;
 
-        String publishedOn;
+    String publishedOn;
 
-        Boolean requestModeration;
+    Boolean requestModeration;
 
-        StateAction stateAction;
+    StateAction stateAction;
 
-        @Size(min = 3, max = 120)
-        String title;
+    @Size(min = 3, max = 120)
+    String title;
 
 
 }

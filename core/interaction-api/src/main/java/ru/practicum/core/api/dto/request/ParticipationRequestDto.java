@@ -13,16 +13,16 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ParticipationRequestDto{
+public class ParticipationRequestDto {
 
-        LocalDateTime created;
+    LocalDateTime created;
 
-        Long event;
+    Long event;
 
-        Long id;
+    Long id;
 
-        Long requester;
+    Long requester;
 
-        RequestStatus status;
+    RequestStatus status;
 
 }
