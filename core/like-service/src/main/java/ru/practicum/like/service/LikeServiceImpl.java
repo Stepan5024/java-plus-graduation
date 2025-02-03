@@ -5,7 +5,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.practicum.core.api.dto.event.EventFullDto;
 import ru.practicum.core.api.enums.Status;
 import ru.practicum.core.api.error.NotFoundException;
 import ru.practicum.core.api.error.RestrictionsViolationException;
@@ -34,12 +33,11 @@ public class LikeServiceImpl implements LikeService {
     private final LikeRepository likeRepository;
     private final UserFeignClient userFeignClient;
     private final RequestFeignClient requestFeignClient;
-    private final EventMapper eventMapper;
 
 
     @Override
     @Transactional
-    public EventFullDto addLike(long eventId, long userId, StatusLike statusLike) {
+    public EventDto addLike(long eventId, long userId, StatusLike statusLike) {
         log.info("The beginning of the process of adding like to an event");
 
         // Получаем информацию о пользователе через Feign Client
@@ -83,12 +81,12 @@ public class LikeServiceImpl implements LikeService {
         changeRatingUserAndEvent(eventDto, statusLike, DIFFERENCE_RATING_BY_ADD);
 
         log.info("The {} was added", statusLike);
-        return eventMapper.eventToEventFullDto(eventDto);
+        return eventDto;
     }
 
     @Override
     @Transactional
-    public EventFullDto updateLike(long eventId, long userId, StatusLike statusLike) {
+    public EventDto updateLike(long eventId, long userId, StatusLike statusLike) {
         log.info("The beginning of the process of updating like for eventId={} and userId={}", eventId, userId);
 
         // Fetch User information from User service using Feign Client
@@ -126,7 +124,7 @@ public class LikeServiceImpl implements LikeService {
         }
 
         // Return the updated Event DTO
-        return eventMapper.eventToEventFullDto(eventDto);
+        return eventDto;
     }
 
     @Override

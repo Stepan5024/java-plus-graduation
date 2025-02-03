@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.core.api.dto.event.EventFullDto;
+import ru.practicum.like.dto.EventDto;
 import ru.practicum.like.model.StatusLike;
 import ru.practicum.like.service.LikeService;
 
@@ -19,16 +19,16 @@ public class LikeController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public EventFullDto addLike(@PathVariable @Positive long eventId,
-                                @PathVariable @Positive long userId,
-                                @RequestParam StatusLike reaction) {
+    public EventDto addLike(@PathVariable @Positive long eventId,
+                            @PathVariable @Positive long userId,
+                            @RequestParam StatusLike reaction) {
         log.info("Add like to an event with eventId = {}, by user with user_id = {}, reaction = {}",
                 eventId, userId, reaction);
         return likeService.addLike(eventId, userId, reaction);
     }
 
     @PatchMapping
-    public EventFullDto updateLike(@PathVariable @Positive long eventId,
+    public EventDto updateLike(@PathVariable @Positive long eventId,
                                    @PathVariable @Positive long userId,
                                    @RequestParam StatusLike reaction) {
         log.info("Patch like to an event with eventId = {}, by user with user_id = {}, reaction = {}",
