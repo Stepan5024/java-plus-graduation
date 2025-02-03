@@ -1,4 +1,4 @@
-package ru.practicum.like.dto;
+package ru.practicum.core.api.dto.event;
 
 
 import lombok.Data;

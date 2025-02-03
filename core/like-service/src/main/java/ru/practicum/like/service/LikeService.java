@@ -1,7 +1,7 @@
 package ru.practicum.like.service;
 
 
-import ru.practicum.like.dto.EventDto;
+import ru.practicum.core.api.dto.event.EventDto;
 import ru.practicum.like.model.StatusLike;
 
 public interface LikeService {

@@ -1,15 +1,22 @@
-package ru.practicum.like.exchange;
+package ru.practicum.core.api.client;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
-import ru.practicum.like.dto.EventDto;
-
+import ru.practicum.core.api.dto.event.EventDto;
+import ru.practicum.core.api.dto.event.EventFullDto;
 
 @FeignClient(name = "event-service")
 public interface EventFeignClient {
+
+    @GetMapping("/internal/events/{eventId}")
+    EventFullDto getById(@PathVariable long eventId);
+
+    @GetMapping("/events/{eventId}/initiator/{userId}")
+    EventFullDto getEventByIdAndInitiatorId(@PathVariable("eventId") long eventId, @PathVariable("userId") long userId);
+
     @GetMapping("/events/{eventId}")
     EventDto getEventById(@PathVariable long eventId);
 
@@ -18,4 +25,5 @@ public interface EventFeignClient {
 
     @PatchMapping("/events/{eventId}/rating")
     void updateEventRating(@PathVariable long eventId, @RequestParam int newRating);
+
 }

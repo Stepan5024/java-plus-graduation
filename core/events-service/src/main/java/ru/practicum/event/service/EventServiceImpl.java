@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import ru.practicum.ViewStatsDto;
+import ru.practicum.core.api.client.RequestsFeignClient;
 import ru.practicum.core.api.client.UserFeignClient;
 import ru.practicum.core.api.dto.event.*;
 import ru.practicum.core.api.dto.request.ParticipationRequestDto;
@@ -19,14 +20,11 @@ import ru.practicum.core.api.enums.EventState;
 import ru.practicum.core.api.enums.RequestStatus;
 import ru.practicum.core.api.enums.StateAction;
 import ru.practicum.event.dto.EventRequestStatusUpdateRequestDto;
-import ru.practicum.event.dto.category.CategoryDto;
 import ru.practicum.event.dto.mapper.EventMapper;
 import ru.practicum.event.enums.EventPublicSort;
 import ru.practicum.event.exception.DataTimeException;
 import ru.practicum.event.exception.NotFoundException;
 import ru.practicum.event.exception.RestrictionsViolationException;
-import ru.practicum.event.exchange.CategoryFeignClient;
-import ru.practicum.event.exchange.RequestsFeignClient;
 import ru.practicum.event.model.Category;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.repository.CategoryRepository;
@@ -49,11 +47,12 @@ import static ru.practicum.event.model.QEvent.event;
 public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
     private final UserFeignClient userFeignClient;
-    private final CategoryFeignClient categoryFeignClient;
+    private final CategoryRepository categoryRepository;
+
     private final RequestsFeignClient requestsFeignClient;
     private final StatProxyClient statClient;
     private final EventMapper eventMapper;
-    private final CategoryRepository categoryRepository;
+
 
     @Transactional
     @Override
@@ -178,13 +177,9 @@ public class EventServiceImpl implements EventService {
             event.setAnnotation(updateEvent.getAnnotation());
         }
         if (updateEvent.getCategory() != null) {
-            CategoryDto categoryDto = categoryFeignClient.getCategoryById(updateEvent.getCategory());
-            if (categoryDto == null) {
-                throw new NotFoundException("Category with id=" + updateEvent.getCategory() + " was not found");
-            }
-            Category category = new Category();
-            category.setId(categoryDto.getId());
-            category.setName(categoryDto.getName());
+            Category category = categoryRepository.findById(updateEvent.getCategory())
+                    .orElseThrow(() -> new NotFoundException("Category not found with id: " + updateEvent.getCategory()));
+
             event.setCategory(category);
         }
         if (updateEvent.getDescription() != null && !updateEvent.getDescription().isBlank()) {
@@ -403,13 +398,9 @@ public class EventServiceImpl implements EventService {
             event.setAnnotation(updateEvent.getAnnotation());
         }
         if (updateEvent.getCategory() != null) {
-            CategoryDto categoryDto = categoryFeignClient.getCategoryById(updateEvent.getCategory());
-            if (categoryDto == null) {
-                throw new NotFoundException("Category with id=" + updateEvent.getCategory() + " was not found");
-            }
-            Category category = new Category();
-            category.setId(categoryDto.getId());
-            category.setName(categoryDto.getName());
+            Category category = categoryRepository.findById(updateEvent.getCategory())
+                    .orElseThrow(() -> new NotFoundException("Category not found with id: " + updateEvent.getCategory()));
+
 
             event.setCategory(category);
         }

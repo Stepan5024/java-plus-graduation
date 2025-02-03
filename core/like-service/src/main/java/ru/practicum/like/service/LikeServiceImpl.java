@@ -5,14 +5,15 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.practicum.core.api.client.EventFeignClient;
+import ru.practicum.core.api.client.RequestsFeignClient;
 import ru.practicum.core.api.client.UserFeignClient;
+import ru.practicum.core.api.dto.event.EventDto;
 import ru.practicum.core.api.dto.user.UserDto;
 import ru.practicum.core.api.enums.Status;
 import ru.practicum.core.api.error.NotFoundException;
 import ru.practicum.core.api.error.RestrictionsViolationException;
-import ru.practicum.like.dto.EventDto;
-import ru.practicum.like.exchange.EventFeignClient;
-import ru.practicum.like.exchange.RequestFeignClient;
+
 import ru.practicum.like.model.Like;
 import ru.practicum.like.model.StatusLike;
 import ru.practicum.like.repository.LikeRepository;
@@ -31,7 +32,7 @@ public class LikeServiceImpl implements LikeService {
     private final EventFeignClient eventFeignClient;
     private final LikeRepository likeRepository;
     private final UserFeignClient userFeignClient;
-    private final RequestFeignClient requestFeignClient;
+    private final RequestsFeignClient requestFeignClient;
 
 
     @Override

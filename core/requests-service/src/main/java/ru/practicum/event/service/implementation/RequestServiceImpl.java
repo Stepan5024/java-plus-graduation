@@ -3,20 +3,20 @@ package ru.practicum.event.service.implementation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.core.api.client.EventFeignClient;
 import ru.practicum.core.api.client.UserFeignClient;
+import ru.practicum.core.api.dto.event.EventFullDto;
 import ru.practicum.core.api.dto.user.UserDto;
 import ru.practicum.core.api.enums.EventState;
 import ru.practicum.core.api.enums.RequestStatus;
 import ru.practicum.core.api.enums.Status;
-import ru.practicum.user.dto.EventDto;
-import ru.practicum.user.dto.ParticipationRequestDto;
-import ru.practicum.user.dto.mapper.RequestMapper;
 import ru.practicum.event.exception.IntegrityViolationException;
 import ru.practicum.event.exception.NotFoundException;
-import ru.practicum.event.exchange.EventFeignClient;
 import ru.practicum.event.model.Request;
 import ru.practicum.event.repository.RequestsRepository;
 import ru.practicum.event.service.RequestService;
+import ru.practicum.user.dto.ParticipationRequestDto;
+import ru.practicum.user.dto.mapper.RequestMapper;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -51,11 +51,11 @@ public class RequestServiceImpl implements RequestService {
                             "Request with userId " + userId + " eventId " + eventId + " exists");
                 });
 
-        EventDto event = eventFeignClient.getEventById(eventId);
+        EventFullDto event = eventFeignClient.getById(eventId);
         if (event == null) {
             throw new NotFoundException("Event with id = " + eventId + " not found");
         }
-        if (event.getInitiatorId() == userId) {
+        if (event.getInitiator().id() == userId) {
             throw new IntegrityViolationException("UserId " + userId + " initiates eventId " + eventId);
         }
         if (!event.getState().equals(EventState.PUBLISHED.name())) {
