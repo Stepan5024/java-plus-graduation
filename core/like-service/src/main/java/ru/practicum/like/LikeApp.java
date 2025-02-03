@@ -6,7 +6,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 
 
 @SpringBootApplication
-@EnableFeignClients
+@EnableFeignClients(basePackages = "ru.practicum.core.api.client")
 public class LikeApp {
     public static void main(String[] args) {
         SpringApplication.run(LikeApp.class, args);

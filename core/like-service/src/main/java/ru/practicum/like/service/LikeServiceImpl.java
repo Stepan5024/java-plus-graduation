@@ -5,14 +5,14 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.practicum.core.api.client.UserFeignClient;
+import ru.practicum.core.api.dto.user.UserDto;
 import ru.practicum.core.api.enums.Status;
 import ru.practicum.core.api.error.NotFoundException;
 import ru.practicum.core.api.error.RestrictionsViolationException;
 import ru.practicum.like.dto.EventDto;
-import ru.practicum.like.dto.UserRequestDto;
 import ru.practicum.like.exchange.EventFeignClient;
 import ru.practicum.like.exchange.RequestFeignClient;
-import ru.practicum.like.exchange.UserFeignClient;
 import ru.practicum.like.model.Like;
 import ru.practicum.like.model.StatusLike;
 import ru.practicum.like.repository.LikeRepository;
@@ -40,7 +40,7 @@ public class LikeServiceImpl implements LikeService {
         log.info("The beginning of the process of adding like to an event");
 
         // Получаем информацию о пользователе через Feign Client
-        UserRequestDto userDto = userFeignClient.getUserById(userId);
+        UserDto userDto = userFeignClient.getUserById(userId);
         if (userDto == null) {
             throw new NotFoundException("User with id=" + userId + " was not found");
         }
@@ -89,7 +89,7 @@ public class LikeServiceImpl implements LikeService {
         log.info("The beginning of the process of updating like for eventId={} and userId={}", eventId, userId);
 
         // Fetch User information from User service using Feign Client
-        UserRequestDto userDto = userFeignClient.getUserById(userId);
+        UserDto userDto = userFeignClient.getUserById(userId);
         if (userDto == null) {
             throw new NotFoundException("User with id=" + userId + " was not found");
         }
@@ -132,7 +132,7 @@ public class LikeServiceImpl implements LikeService {
         log.info("The beginning of the process of deleting like for eventId={} and userId={}", eventId, userId);
 
         // Fetch User information from User service using Feign Client
-        UserRequestDto userDto = userFeignClient.getUserById(userId);
+        UserDto userDto = userFeignClient.getUserById(userId);
         if (userDto == null) {
             throw new NotFoundException("User with id=" + userId + " was not found");
         }
@@ -164,7 +164,7 @@ public class LikeServiceImpl implements LikeService {
 
     private void changeRatingUserAndEvent(EventDto eventDto, StatusLike statusLike, int difference) {
         // Получаем инициатора события по ID через Feign Client
-        UserRequestDto initiatorDto = userFeignClient.getUserById(eventDto.getInitiatorId());
+        UserDto initiatorDto = userFeignClient.getUserById(eventDto.getInitiatorId());
         if (initiatorDto == null) {
             throw new NotFoundException("Initiator with id=" + eventDto.getInitiatorId() + " was not found");
         }
@@ -172,13 +172,13 @@ public class LikeServiceImpl implements LikeService {
         // Изменяем рейтинг инициатора и события в зависимости от статуса лайка
         if (statusLike == StatusLike.LIKE) {
             // Обновляем рейтинг инициатора события
-            userFeignClient.updateUserRating(initiatorDto.getId(), initiatorDto.getRating() + difference);
+            userFeignClient.updateUserRating(initiatorDto.id(), initiatorDto.rating() + difference);
 
             // Обновляем рейтинг события
             eventFeignClient.updateEventRating(eventDto.getId(), eventDto.getRating() + difference);
         } else if (statusLike == StatusLike.DISLIKE) {
             // Обновляем рейтинг инициатора события
-            userFeignClient.updateUserRating(initiatorDto.getId(), initiatorDto.getRating() - difference);
+            userFeignClient.updateUserRating(initiatorDto.id(), initiatorDto.rating() - difference);
 
             // Обновляем рейтинг события
             eventFeignClient.updateEventRating(eventDto.getId(), eventDto.getRating() - difference);

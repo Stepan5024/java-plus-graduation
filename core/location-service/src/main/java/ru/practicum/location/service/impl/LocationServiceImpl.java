@@ -4,7 +4,7 @@ package ru.practicum.location.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.core.api.client.LikeServiceClient;
-import ru.practicum.core.api.client.UserServiceClient;
+import ru.practicum.core.api.client.UserFeignClient;
 import ru.practicum.core.api.dto.location.LocationDto;
 import ru.practicum.core.api.error.NotFoundException;
 import ru.practicum.location.mapper.LocationMapper;
@@ -22,14 +22,14 @@ import java.util.Optional;
 public class LocationServiceImpl implements LocationService {
 
     private final LocationRepository locationRepository;
-    private final UserServiceClient userServiceClient;
+    private final UserFeignClient userFeignClient;
     private final LocationMapper locationMapper;
     private final LikeServiceClient likeServiceClient;
 
 
     @Override
     public List<LocationDto> getTop(long userId, Integer count) {
-        userServiceClient.checkExistence(userId);
+        userFeignClient.existsById(userId);
         Map<Long, Long> topLocationIds = likeServiceClient.getTopLikedLocationsIds(count);
 
         List<Location> locationTopList = locationRepository.findAllById(topLocationIds.keySet());
