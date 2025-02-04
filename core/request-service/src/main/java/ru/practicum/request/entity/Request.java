@@ -1,9 +1,11 @@
 package ru.practicum.request.entity;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.FieldDefaults;
 import ru.practicum.core.api.enums.RequestStatus;
 
 import java.time.LocalDateTime;
@@ -13,24 +15,25 @@ import java.time.LocalDateTime;
 @Getter
 @EqualsAndHashCode(of = "id")
 @Table(name = "requests")
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class Request {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "request_id")
-    private Long id;
+    Long id;
 
     @Column(name = "event_id")
-    private Long eventId;
+    Long eventId;
 
     @Column(name = "requester_id")
-    private Long requesterId;
+    Long requesterId;
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
-    private RequestStatus status;
+    RequestStatus status;
 
     @Column(name = "created")
-    private LocalDateTime created;
+    LocalDateTime created;
 
 }

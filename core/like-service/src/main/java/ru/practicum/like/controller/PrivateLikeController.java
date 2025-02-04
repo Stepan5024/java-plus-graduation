@@ -13,50 +13,41 @@ import ru.practicum.like.service.LikeService;
 @RequiredArgsConstructor
 public class PrivateLikeController {
 
+    private static final String USERS_PATH = "/users/{userId}";
+    private static final String EVENTS_LIKES_PATH = USERS_PATH + "/events/{eventId}/likes";
+    private static final String LOCATIONS_LIKES_PATH = USERS_PATH + "/locations/{locationId}/likes";
+
     private final LikeService likeService;
 
-    @PutMapping("/users/{userId}/events/{eventId}/likes")
+    @PutMapping(EVENTS_LIKES_PATH)
     public Long addEventLike(@PathVariable long userId, @PathVariable long eventId) {
-        log.info("==> PUT. /users/{userId}/events/{eventId}/likes" +
-                "Adding like for event with id: {} by user with id: {}", eventId, userId);
+        log.info("==> PUT {} - Adding like for event with id: {} by user with id: {}", EVENTS_LIKES_PATH, eventId, userId);
         Long countOfLikes = likeService.addEventLike(eventId, userId);
-        log.info("<== PUT. /users/{userId}/events/{eventId}/likes" +
-                "Like for event with id: {} by user with id: {} added. Current count of likes: {}",
-                eventId, userId, countOfLikes);
+        log.info("<== PUT {} - Like added. Current count of likes: {}", EVENTS_LIKES_PATH, countOfLikes);
         return countOfLikes;
     }
 
-    @DeleteMapping("/users/{userId}/events/{eventId}/likes")
+    @DeleteMapping(EVENTS_LIKES_PATH)
     public Long deleteEventLike(@PathVariable long userId, @PathVariable long eventId) {
-        log.info("==> DELETE. /users/{userId}/events/{eventId}/likes" +
-                " Deleting like for event with id: {} by user with id: {}", userId, eventId);
+        log.info("==> DELETE {} - Deleting like for event with id: {} by user with id: {}", EVENTS_LIKES_PATH, eventId, userId);
         Long countOfLikes = likeService.deleteEventLike(eventId, userId);
-        log.info("<== DELETE. /users/{userId}/events/{eventId}/likes" +
-                "Like for event with id: {} by user with id: {} deleted. Current count of likes: {}",
-                eventId, userId, countOfLikes);
+        log.info("<== DELETE {} - Like deleted. Current count of likes: {}", EVENTS_LIKES_PATH, countOfLikes);
         return countOfLikes;
     }
 
-    @PutMapping("/users/{userId}/locations/{locationId}/likes")
+    @PutMapping(LOCATIONS_LIKES_PATH)
     public Long addLocationLike(@PathVariable long userId, @PathVariable long locationId) {
-        log.info("==> PUT. /users/{userId}/locations/{locationId}/likes" +
-                "Adding like for location with id: {} by user with id: {}", locationId, userId);
+        log.info("==> PUT {} - Adding like for location with id: {} by user with id: {}", LOCATIONS_LIKES_PATH, locationId, userId);
         Long locationLikesCount = likeService.addLocationLike(locationId, userId);
-        log.info("<== PUT. /users/{userId}/locations/{locationId}/likes" +
-                "LikeCounts for location with id: {} by user with id: {} added. Current count: {}",
-                locationId, userId, locationLikesCount);
+        log.info("<== PUT {} - Like added. Current count of likes: {}", LOCATIONS_LIKES_PATH, locationLikesCount);
         return locationLikesCount;
     }
 
-    @DeleteMapping("/users/{userId}/locations/{locationId}/likes")
+    @DeleteMapping(LOCATIONS_LIKES_PATH)
     public Long deleteLocationLike(@PathVariable long userId, @PathVariable long locationId) {
-        log.info("==> DELETE. /users/{userId}/locations/{locationId}/likes" +
-                "Deleting like for location with id: {} by user with id: {}", locationId, userId);
+        log.info("==> DELETE {} - Deleting like for location with id: {} by user with id: {}", LOCATIONS_LIKES_PATH, locationId, userId);
         Long locationLikesCount = likeService.deleteLocationLike(locationId, userId);
-        log.info("<== DELETE. /users/{userId}/locations/{locationId}/likes" +
-                "Like for location with id: {} by user with id: {} deleted. Current count: {}",
-                locationId, userId, locationLikesCount);
+        log.info("<== DELETE {} - Like deleted. Current count of likes: {}", LOCATIONS_LIKES_PATH, locationLikesCount);
         return locationLikesCount;
     }
-
 }

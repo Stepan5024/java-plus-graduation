@@ -1,9 +1,11 @@
 package ru.practicum.core.event.entity;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.FieldDefaults;
 import ru.practicum.core.api.dto.location.LocationDto;
 import ru.practicum.core.api.dto.user.UserDto;
 import ru.practicum.core.api.enums.EventState;
@@ -15,67 +17,68 @@ import java.time.LocalDateTime;
 @Setter
 @EqualsAndHashCode(of = {"id"})
 @Table(name = "events")
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class Event {
 
     @Id
     @Column(name = "event_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    long id;
 
     @Column(name = "annotation")
-    private String annotation;
+    String annotation;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
-    private Category category;
+    Category category;
 
     @Transient
-    private Long confirmedRequests;
+    Long confirmedRequests;
 
     @Column(name = "created_on")
-    private LocalDateTime createOn;
+    LocalDateTime createOn;
 
     @Column(name = "description")
-    private String description;
+    String description;
 
     @Column(name = "event_date")
-    private LocalDateTime eventDate;
+    LocalDateTime eventDate;
 
     @Column(name = "location_id")
-    private Long locationId;
+    Long locationId;
 
     @Transient
-    private LocationDto location;
+    LocationDto location;
 
     @Column(name = "paid")
-    private boolean paid;
+    boolean paid;
 
     @Column(name = "initiator_id")
-    private Long initiatorId;
+    Long initiatorId;
 
     @Transient
-    private UserDto initiator;
+    UserDto initiator;
 
     @Column(name = "participant_limit")
-    private int participantLimit;
+    int participantLimit;
 
     @Column(name = "published_on")
-    private LocalDateTime publishedOn;
+    LocalDateTime publishedOn;
 
     @Column(name = "request_moderation")
-    private boolean requestModeration;
+    boolean requestModeration;
 
     @Column(name = "state")
     @Enumerated(EnumType.STRING)
-    private EventState state;
+    EventState state;
 
     @Column(name = "TITLE")
-    private String title;
+    String title;
 
     @Transient
-    private Long views;
+    Long views;
 
     @Transient
-    private Long likes;
+    Long likes;
 
 }

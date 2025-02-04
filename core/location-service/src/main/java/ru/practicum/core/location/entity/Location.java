@@ -1,10 +1,8 @@
 package ru.practicum.core.location.entity;
 
 import jakarta.persistence.*;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Entity
 @Getter
@@ -12,20 +10,21 @@ import lombok.Setter;
 @EqualsAndHashCode(of = {"id"})
 @Table(name = "locations")
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class Location {
 
     @Id
     @Column(name = "location_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    long id;
 
     @Column(name = "lat")
-    private Float lat;
+    Float lat;
 
     @Column(name = "lon")
-    private Float lon;
+    Float lon;
 
     @Transient
-    private Long likes;
+    Long likes;
 
 }

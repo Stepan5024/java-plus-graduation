@@ -12,31 +12,32 @@ import ru.practicum.core.event.service.CompilationService;
 
 @Slf4j
 @RestController
-@RequestMapping(path = "/admin/compilations")
+@RequestMapping(AdminCompilationController.ADMIN_COMPILATIONS_PATH)
 @RequiredArgsConstructor
 public class AdminCompilationController {
-    private final CompilationService compilationService;
+    public static final String ADMIN_COMPILATIONS_PATH = "/admin/compilations";
+    public static final String ID_PATH = "/{id}";
 
+    private final CompilationService compilationService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CompilationDto createCompilation(
-            @Valid @RequestBody NewCompilationDto dto) {
+    public CompilationDto createCompilation(@Valid @RequestBody NewCompilationDto dto) {
         log.info("==> POST. Adding new Compilation: {}", dto);
         return compilationService.createCompilation(dto);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping(ID_PATH)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteCompilation(@PathVariable long id) {
-        log.info("==> POST. Deleting Compilation: {}", id);
+        log.info("==> DELETE. Deleting Compilation: {}", id);
         compilationService.delete(id);
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping(ID_PATH)
     @ResponseStatus(HttpStatus.OK)
     public CompilationDto updateCompilation(@PathVariable long id, @Valid @RequestBody UpdateCompilationRequestDto compilationDto) {
-        log.info("==> POST. Updating Compilation: {}", compilationDto);
+        log.info("==> PATCH. Updating Compilation: {}", compilationDto);
         return compilationService.updateCompilation(id, compilationDto);
     }
 }
