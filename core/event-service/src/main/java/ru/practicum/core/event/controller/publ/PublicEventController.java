@@ -1,8 +1,6 @@
 package ru.practicum.core.event.controller.publ;
 
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.client.CollectorClient;
@@ -28,7 +26,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/events")
 @RequiredArgsConstructor
-@Slf4j
 public class PublicEventController {
 
     private final EventService eventService;
@@ -56,11 +53,7 @@ public class PublicEventController {
             @RequestParam(required = false) @DateTimeFormat(pattern = Constants.JSON_TIME_FORMAT) LocalDateTime rangeEnd,
             @RequestParam(required = false, defaultValue = "false") Boolean onlyAvailable,
             @RequestParam(required = false, defaultValue = "0") Integer from,
-            @RequestParam(required = false, defaultValue = "10") Integer size,
-            HttpServletRequest httpRequest) {
-        log.info("==> GET /events Public searching events with params: " +
-                        "text {}, categories: {}, paid {}, rangeStart: {}, rangeEnd: {}, available {}, from: {}, size: {}",
-                text, categories, paid, rangeStart, rangeEnd, onlyAvailable, from, size);
+            @RequestParam(required = false, defaultValue = "10") Integer size) {
 
         if (rangeStart != null && rangeEnd != null && rangeStart.isAfter(rangeEnd)) {
             throw new IncorrectValueException("rangeStart of event can't be after rangeEnd");
