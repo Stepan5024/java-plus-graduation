@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 import java.time.Instant;
 
@@ -14,23 +15,24 @@ import java.time.Instant;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "events_similarities")
 public class EventSimilarity {
 
     @Id
     @Column(name = "event_similarity_id")
-    private Long eventSimilarityId;
+    Long eventSimilarityId;
 
     @Column(name = "event_A_id")
-    private long eventAId;
+    long eventAId;
 
     @Column(name = "event_B_id")
-    private long eventBId;
+    long eventBId;
 
     @Column(name = "score")
-    private double score;
+    double score;
 
     @Column(name = "timestamp")
-    private Instant timestamp;
+    Instant timestamp;
 
 }

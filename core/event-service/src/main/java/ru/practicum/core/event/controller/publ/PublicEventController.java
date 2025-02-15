@@ -32,15 +32,18 @@ public class PublicEventController {
     private final CollectorClient collectorClient;
     private final RecommendationService recommendationService;
     private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(Constants.JSON_TIME_FORMAT);
+    private static final String HEADER_USER_ID = "X-EWM-USER-ID";
+
 
     @GetMapping("/recommendations")
     public List<RecommendationDto> getRecommendations(
-            @RequestHeader("X-EWM-USER-ID") long userId, @RequestParam(name = "size", defaultValue = "10") int size) {
+            @RequestHeader(HEADER_USER_ID) long userId,
+            @RequestParam(name = "size", defaultValue = "10") int size) {
         return recommendationService.getRecommendations(userId, size);
     }
 
     @PutMapping("/{eventId}/like")
-    public Long addEventLike(@RequestHeader("X-EWM-USER-ID") long userId, @PathVariable long eventId) {
+    public Long addEventLike(@RequestHeader(HEADER_USER_ID) long userId, @PathVariable long eventId) {
         return eventService.addEventLike(eventId, userId);
     }
 
@@ -83,8 +86,7 @@ public class PublicEventController {
     }
 
     @GetMapping("/{id}")
-    public EventFullDto getById(
-            @PathVariable Long id, @RequestHeader("X-EWM-USER-ID") long userId) {
+    public EventFullDto getById(@PathVariable Long id, @RequestHeader(HEADER_USER_ID) long userId) {
         EventFullDto eventFullDto = eventService.getById(new EventGetByIdParams(null, id));
         if (eventFullDto.state() != EventState.PUBLISHED) {
             throw new NotFoundException("Нет опубликованных событий с id " + id);

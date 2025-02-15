@@ -2,6 +2,7 @@ package ru.yandex.practicum.stats.analyzer.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 import java.time.Instant;
 
@@ -12,24 +13,25 @@ import java.time.Instant;
 @Builder
 @RequiredArgsConstructor
 @AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "users_actions")
 public class UserAction {
 
     @Id
     @Column(name = "user_action_id")
-    private long userActionId;
+    long userActionId;
 
     @Column(name = "user_id")
-    private long userId;
+    long userId;
 
     @Column(name = "event_id")
-    private long eventId;
+    long eventId;
 
     @Column(name = "action_type")
     @Enumerated(EnumType.STRING)
-    private ActionType actionType;
+    ActionType actionType;
 
     @Column(name = "timestamp")
-    private Instant timestamp;
+    Instant timestamp;
 
 }

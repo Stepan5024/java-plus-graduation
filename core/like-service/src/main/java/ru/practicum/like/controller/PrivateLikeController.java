@@ -12,23 +12,25 @@ import ru.practicum.like.service.LikeService;
 public class PrivateLikeController {
 
     private final LikeService likeService;
+    private static final String EVENT_LIKE_PATH = "/users/{userId}/events/{eventId}/likes";
+    private static final String LOCATION_LIKE_PATH = "/users/{userId}/locations/{locationId}/likes";
 
-    @PutMapping("/users/{userId}/events/{eventId}/likes")
+    @PutMapping(EVENT_LIKE_PATH)
     public Long addEventLike(@PathVariable long userId, @PathVariable long eventId) {
         return likeService.addEventLike(eventId, userId);
     }
 
-    @DeleteMapping("/users/{userId}/events/{eventId}/likes")
+    @DeleteMapping(EVENT_LIKE_PATH)
     public Long deleteEventLike(@PathVariable long userId, @PathVariable long eventId) {
         return likeService.deleteEventLike(eventId, userId);
     }
 
-    @PutMapping("/users/{userId}/locations/{locationId}/likes")
+    @PutMapping(LOCATION_LIKE_PATH)
     public Long addLocationLike(@PathVariable long userId, @PathVariable long locationId) {
         return likeService.addLocationLike(locationId, userId);
     }
 
-    @DeleteMapping("/users/{userId}/locations/{locationId}/likes")
+    @DeleteMapping(LOCATION_LIKE_PATH)
     public Long deleteLocationLike(@PathVariable long userId, @PathVariable long locationId) {
         return likeService.deleteLocationLike(locationId, userId);
     }
