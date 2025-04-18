@@ -50,6 +50,9 @@ public class Event {
     @Transient
     LocationDto location;
 
+    @Transient
+    Double rating;
+
     @Column(name = "paid")
     boolean paid;
 
